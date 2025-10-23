@@ -7,22 +7,19 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// إعدادات للاستضافة
 const PORT = process.env.PORT || 3000;
 
-// خدمة الملفات الثابتة
 app.use(express.static(path.join(__dirname)));
 
-// الصفحة الرئيسية
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // تخزين المستخدمين والرسائل
 const users = new Map();
-let messages = [];  // غيرنا لـ let بدل const
+let messages = [];  // ⬅️ غيرنا لـ let
 
-// ✅ ✅ ✅ أضف كود إدارة الذاكرة هنا - بعد تعريف messages وقبل io.on('connection')
+// ✅ 🧹 كود تنظيف الذاكرة التلقائي
 setInterval(() => {
     if (messages.length > 1000) {
         messages = messages.slice(-500);
@@ -30,7 +27,7 @@ setInterval(() => {
     }
 }, 60000); // كل دقيقة
 
-// إعداد Socket.io - الكود الأصلي يبدأ من هنا
+// الكود الأصلي يبدأ من هنا
 io.on('connection', (socket) => {
     console.log('مستخدم متصل:', socket.id);
 
@@ -38,8 +35,6 @@ io.on('connection', (socket) => {
         users.set(socket.id, username);
         socket.broadcast.emit('user-joined', username);
         socket.emit('previous-messages', messages.slice(-50));
-    });
-
     });
 
     socket.on('send-message', (data) => {
@@ -53,7 +48,11 @@ io.on('connection', (socket) => {
             };
             
             messages.push(message);
-            if (messages.length > 100) messages.shift();
+            
+            // حفظ فقط آخر 100 رسالة في الذاكرة الفورية
+            if (messages.length > 100) {
+                messages.shift();
+            }
             
             io.emit('new-message', message);
         }
