@@ -11,35 +11,59 @@
 <body>
     <!-- شاشة تسجيل الدخول -->
     <div id="login-screen" class="screen active">
-        <div class="login-container">
-            <div class="login-header">
-                <h1>🔴 منصة الدردشة الحمراء</h1>
+        <div class="animated-bg"></div>
+        <div class="login-container fade-in">
+            <!-- الشعار والصورة -->
+            <div class="site-logo">
+                <img src="https://i.top4top.io/p_3583q2vy21.jpg" 
+                     alt="شعار الدردشة الحمراء" 
+                     class="logo-image">
+                <div class="logo-text">الدردشة الحمراء</div>
                 <p>منصة دردشة عربية آمنة ومتطورة</p>
-                <div class="copyright-notice">
-                    © 2024 جميع الحقوق محفوظة
-                </div>
             </div>
             
             <div class="login-options">
-                <!-- الدخول بكود موجود -->
+                <!-- الدخول بالاسم والكود -->
                 <div class="login-option">
-                    <h3>الدخول بكود</h3>
-                    <input type="text" id="login-code" placeholder="أدخل كود الدخول" maxlength="10">
-                    <button onclick="loginWithCode()">دخول</button>
+                    <h3>🔐 تسجيل الدخول</h3>
+                    <input type="text" id="login-username" placeholder="اسم المستخدم" maxlength="20">
+                    <input type="text" id="login-code" placeholder="كود الدخول" maxlength="10">
+                    <button onclick="loginWithCredentials()">دخول إلى الدردشة</button>
+                    <div class="login-info">
+                        <small>أدخل اسم المستخدم وكود الدخول</small>
+                    </div>
                 </div>
                 
-                <!-- أو -->
                 <div class="or-divider">
                     <span>أو</span>
                 </div>
                 
                 <!-- إنشاء حساب جديد -->
                 <div class="login-option">
-                    <h3>إنشاء حساب جديد</h3>
-                    <input type="text" id="new-username" placeholder="اسم المستخدم" maxlength="20">
-                    <input type="password" id="new-password" placeholder="كلمة المرور">
-                    <button onclick="createAccount()">إنشاء حساب</button>
+                    <h3>🎯 إنشاء حساب جديد</h3>
+                    <input type="text" id="new-username" placeholder="اختر اسم مستخدم" maxlength="20">
+                    <input type="password" id="new-password" placeholder="اختر كلمة مرور قوية">
+                    <button onclick="createAccount()">إنشاء حساب جديد</button>
+                    <div class="login-info">
+                        <small>سيتم إنشاء كود دخول فريد لك</small>
+                    </div>
                 </div>
+            </div>
+            
+            <!-- معلومات الحماية -->
+            <div class="security-notice">
+                <h4>🛡️ نصائح أمان:</h4>
+                <ul>
+                    <li>لا تشارك كود الدخول مع أي شخص</li>
+                    <li>اختر كلمة مرور قوية</li>
+                    <li>الحسابات غير النشطة تحذف بعد 10 أيام</li>
+                    <li>الرسائل خاصة وآمنة</li>
+                </ul>
+            </div>
+
+            <!-- حقوق الطبع -->
+            <div class="copyright-notice">
+                © 2024 منصة الدردشة الحمراء - جميع الحقوق محفوظة
             </div>
         </div>
     </div>
@@ -50,7 +74,10 @@
             <!-- الهيدر -->
             <header class="chat-header">
                 <div class="header-left">
-                    <h1>🔴 الدردشة الحمراء</h1>
+                    <div class="header-logo">
+                        <img src="https://i.top4top.io/p_3583q2vy21.jpg" alt="الشعار" class="header-logo-image">
+                        <h1>الدردشة الحمراء</h1>
+                    </div>
                     <div class="user-status">
                         <span id="current-user"></span>
                         <span id="user-badges"></span>
@@ -58,7 +85,7 @@
                 </div>
                 <div class="header-right">
                     <button id="users-list-btn" onclick="toggleUsersList()">👥 المستخدمين</button>
-                    <button id="admin-panel-btn" style="display: none;" onclick="showAdminPanel()">👑 لوحة التحكم</button>
+                    <button id="admin-panel-btn" style="display: none;" onclick="showAdminPanel()">👑 الأدمن</button>
                     <button id="logout-btn" onclick="logout()">خروج</button>
                 </div>
             </header>
@@ -75,8 +102,9 @@
                 <div class="chat-content">
                     <div class="chat-messages" id="messages">
                         <div class="welcome-message">
-                            <h3>مرحباً! 👋</h3>
-                            <p>ابدأ الدردشة مع الأصدقاء</p>
+                            <img src="https://i.top4top.io/p_3583q2vy21.jpg" alt="مرحباً" class="welcome-logo">
+                            <h3>مرحباً بك! 👋</h3>
+                            <p>ابدأ الدردشة مع الأصدقاء في منصة الدردشة الحمراء</p>
                             <p class="copyright-small">© 2024 منصة الدردشة الحمراء - جميع الحقوق محفوظة</p>
                         </div>
                     </div>
@@ -84,7 +112,6 @@
                     <!-- أدوات الإرسال -->
                     <div class="chat-tools">
                         <div class="message-options">
-                            <button id="image-btn" onclick="document.getElementById('image-input').click()">🖼️ صورة</button>
                             <button id="private-btn" onclick="togglePrivateMode()">🔒 خاص</button>
                             <select id="user-select" style="display: none;">
                                 <option value="">اختر مستخدم</option>
@@ -92,7 +119,7 @@
                         </div>
                         
                         <form id="message-form" class="message-form">
-                            <input type="text" id="message-input" placeholder="اكتب رسالتك..." maxlength="500">
+                            <input type="text" id="message-input" placeholder="اكتب رسالتك هنا..." maxlength="500">
                             <button type="submit">إرسال 🚀</button>
                         </form>
                     </div>
@@ -126,9 +153,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Input hidden لرفع الصور -->
-    <input type="file" id="image-input" accept="image/*" style="display: none;">
     
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
