@@ -20,8 +20,17 @@ app.get('/', (req, res) => {
 
 // تخزين المستخدمين والرسائل
 const users = new Map();
-const messages = [];
+let messages = [];  // غيرنا لـ let بدل const
 
+// ✅ ✅ ✅ أضف كود إدارة الذاكرة هنا - بعد تعريف messages وقبل io.on('connection')
+setInterval(() => {
+    if (messages.length > 1000) {
+        messages = messages.slice(-500);
+        console.log(`🧹 تم تنظيف الذاكرة. الرسائل الآن: ${messages.length}`);
+    }
+}, 60000); // كل دقيقة
+
+// إعداد Socket.io - الكود الأصلي يبدأ من هنا
 io.on('connection', (socket) => {
     console.log('مستخدم متصل:', socket.id);
 
@@ -29,6 +38,8 @@ io.on('connection', (socket) => {
         users.set(socket.id, username);
         socket.broadcast.emit('user-joined', username);
         socket.emit('previous-messages', messages.slice(-50));
+    });
+
     });
 
     socket.on('send-message', (data) => {
