@@ -10,6 +10,7 @@ let usersList = [];
 const elements = {
     loginScreen: document.getElementById('login-screen'),
     chatScreen: document.getElementById('chat-screen'),
+    loginUsername: document.getElementById('login-username'),
     loginCode: document.getElementById('login-code'),
     newUsername: document.getElementById('new-username'),
     newPassword: document.getElementById('new-password'),
@@ -19,31 +20,32 @@ const elements = {
     messagesContainer: document.getElementById('messages'),
     messageInput: document.getElementById('message-input'),
     messageForm: document.getElementById('message-form'),
-    imageInput: document.getElementById('image-input'),
     userSelect: document.getElementById('user-select'),
     usersSidebar: document.getElementById('users-sidebar'),
     adminPanelBtn: document.getElementById('admin-panel-btn')
 };
 
-// أحداث التسجيل
-window.loginWithCode = function() {
+// تسجيل الدخول بالاسم والكود
+window.loginWithCredentials = function() {
+    const username = elements.loginUsername.value.trim();
     const code = elements.loginCode.value.trim();
-    if (code) {
-        socket.emit('login-with-code', { code: code });
+    
+    if (username && code) {
+        socket.emit('login-with-credentials', { 
+            username: username, 
+            code: code 
+        });
     } else {
-        showAlert('الرجاء إدخال كود الدخول', 'error');
+        showAlert('الرجاء إدخال اسم المستخدم وكود الدخول', 'error');
     }
 };
 
+// إنشاء حساب
 window.createAccount = function() {
     const username = elements.newUsername.value.trim();
     const password = elements.newPassword.value.trim();
     
     if (username && password) {
-        if (username.length < 3) {
-            showAlert('اسم المستخدم يجب أن يكون 3 أحرف على الأقل', 'error');
-            return;
-        }
         socket.emit('create-account', { 
             username: username, 
             password: password 
@@ -224,44 +226,6 @@ window.toggleUsersList = function() {
         elements.usersSidebar.style.display === 'none' ? 'block' : 'none';
 };
 
-// رفع الصور
-elements.imageInput.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        if (file.size > 5 * 1024 * 1024) {
-            showAlert('حجم الصورة يجب أن يكون أقل من 5MB', 'error');
-            return;
-        }
-        
-        const formData = new FormData();
-        formData.append('image', file);
-        
-        showAlert('جاري رفع الصورة...', 'info');
-        
-        fetch('/upload', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const message = `🖼️ شارك صورة`;
-                sendMessage(message, data.imageUrl);
-                showAlert('تم رفع الصورة بنجاح', 'success');
-            } else {
-                showAlert(data.error || 'فشل في رفع الصورة', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showAlert('حدث خطأ في رفع الصورة', 'error');
-        })
-        .finally(() => {
-            elements.imageInput.value = '';
-        });
-    }
-});
-
 // إرسال الرسائل
 elements.messageForm.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -310,7 +274,7 @@ window.showCopyrightInfo = function() {
         <ul>
             <li><strong>اسم المنتج:</strong> منصة الدردشة الحمراء</li>
             <li><strong>المطور:</strong> [أدخل اسمك هنا]</li>
-            <li><strong>الإصدار:</strong> 2.0.0</li>
+            <li><strong>الإصدار:</strong> 3.0.0</li>
             <li><strong>سنة الإصدار:</strong> 2024</li>
         </ul>
         
@@ -346,7 +310,6 @@ window.showPrivacyPolicy = function() {
         <ul>
             <li>اسم المستخدم</li>
             <li>رسائل الدردشة</li>
-            <li>الصور المرفوعة</li>
             <li>تاريخ وتسجيل الدخول</li>
             <li>كود الدخول الفريد</li>
         </ul>
@@ -424,10 +387,14 @@ socket.on('login-failed', (message) => {
 });
 
 socket.on('account-created', (data) => {
-    const message = `تم إنشاء حسابك!\nكود الدخول الخاص بك: ${data.loginCode}\n\n${data.message}`;
+    const message = `تم إنشاء حسابك!\nاسم المستخدم: ${data.username}\nكود الدخول: ${data.loginCode}\n\n${data.message}`;
     showAlert(message, 'success');
     elements.newUsername.value = '';
     elements.newPassword.value = '';
+});
+
+socket.on('account-error', (message) => {
+    showAlert(message, 'error');
 });
 
 socket.on('new-message', (message) => {
@@ -475,13 +442,13 @@ elements.messageInput.addEventListener('keydown', function(e) {
     }
 });
 
-elements.loginCode.addEventListener('keydown', function(e) {
+elements.loginCode.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
-        loginWithCode();
+        loginWithCredentials();
     }
 });
 
-elements.newPassword.addEventListener('keydown', function(e) {
+elements.newPassword.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
         createAccount();
     }
@@ -525,7 +492,7 @@ function showAlert(message, type = 'info') {
 
 // Auto-focus على حقول الإدخال
 document.addEventListener('DOMContentLoaded', function() {
-    elements.loginCode.focus();
+    elements.loginUsername.focus();
 });
 
 // إدارة select المستخدمين
