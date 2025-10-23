@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - موقع موب العالمي</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="red-bg"></div>
+    <div class="moving-lights">
+        <div class="light red-light"></div>
+        <div class="light red-light"></div>
+        <div class="light red-light"></div>
+    </div>
+
+    <div class="auth-container">
+        <div class="back-button">
+            <button class="glow-button red-button" onclick="goHome()">🏠 الرئيسية</button>
+        </div>
+
+        <div class="logo-container">
+            <img src="https://i.top4top.io/p_3583q2vy21.jpg" alt="شعار موب العالمي" class="logo-image">
+            <div class="logo-text">تسجيل الدخول</div>
+        </div>
+
+        <div class="auth-form glass-card">
+            <h3>🔐 تسجيل الدخول</h3>
+            
+            <div class="form-group">
+                <input type="text" id="login-username" class="glow-input" placeholder="اسم المستخدم" maxlength="20">
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="login-code" class="glow-input" placeholder="كود الدخول" maxlength="20">
+            </div>
+
+            <button class="glow-button red-button" onclick="login()">دخول إلى الدردشة</button>
+
+            <div class="auth-links">
+                <p>ليس لديك حساب؟ <a href="register.html">أنشئ حساب جديد</a></p>
+            </div>
+
+            <!-- رسالة للمدير -->
+            <div class="contact-admin">
+                <h4>📩 رسالة للمدير</h4>
+                <textarea id="admin-message" class="glow-input" placeholder="اكتب رسالتك للمدير هنا..." maxlength="500" rows="3"></textarea>
+                <button class="glow-button red-button" onclick="sendMessageToAdmin()">إرسال للمدير</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        function login() {
+            const username = document.getElementById('login-username').value.trim();
+            const code = document.getElementById('login-code').value.trim();
+            
+            if (username && code) {
+                socket.emit('login-with-credentials', { 
+                    username: username, 
+                    code: code 
+                });
+            } else {
+                showAlert('الرجاء إدخال اسم المستخدم وكود الدخول', 'error');
+            }
+        }
+
+        function sendMessageToAdmin() {
+            const message = document.getElementById('admin-message').value.trim();
+            
+            if (message) {
+                socket.emit('send-admin-message', { 
+                    message: message,
+                    from: 'مستخدم'
+                });
+                document.getElementById('admin-message').value = '';
+                showAlert('تم إرسال رسالتك للمدير بنجاح', 'success');
+            } else {
+                showAlert('الرجاء كتابة رسالة', 'error');
+            }
+        }
+
+        // عند نجاح التسجيل
+        socket.on('login-success', (userData) => {
+            // حفظ بيانات المستخدم
+            localStorage.setItem('userData', JSON.stringify(userData));
+            // الانتقال للشات
+            window.location.href = 'chat.html';
+        });
+
+        socket.on('login-failed', (message) => {
+            showAlert(message, 'error');
+        });
+
+        // أحداث لوحة المفاتيح
+        document.getElementById('login-code').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') login();
+        });
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    document.body.removeChild(alertDiv);
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
