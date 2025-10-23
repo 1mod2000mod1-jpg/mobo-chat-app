@@ -48,6 +48,20 @@ body {
     font-size: 2rem;
 }
 
+.login-header p {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.copyright-notice {
+    background: var(--bg-color);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    color: var(--dark-red);
+    font-size: 0.8rem;
+    margin-top: 1rem;
+}
+
 .login-options {
     margin-top: 2rem;
 }
@@ -72,6 +86,12 @@ body {
     border: 2px solid var(--light-red);
     border-radius: 10px;
     font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.login-option input:focus {
+    border-color: var(--primary-red);
+    outline: none;
 }
 
 .login-option button {
@@ -151,6 +171,7 @@ body {
 
 .header-right button:hover {
     background: rgba(255,255,255,0.3);
+    transform: translateY(-1px);
 }
 
 .chat-main {
@@ -171,6 +192,8 @@ body {
     color: var(--dark-red);
     margin-bottom: 1rem;
     text-align: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--light-red);
 }
 
 .user-item {
@@ -182,6 +205,13 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.user-item:hover {
+    transform: translateX(-5px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
 }
 
 .user-avatar {
@@ -196,6 +226,15 @@ body {
     font-weight: bold;
 }
 
+.user-info {
+    flex: 1;
+}
+
+.user-name {
+    font-weight: bold;
+    color: var(--dark-red);
+}
+
 .user-badges span {
     background: var(--primary-red);
     color: white;
@@ -203,6 +242,25 @@ body {
     border-radius: 10px;
     font-size: 0.7rem;
     margin-right: 0.3rem;
+}
+
+.user-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.user-actions button {
+    background: var(--light-red);
+    border: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.user-actions button:hover {
+    background: var(--primary-red);
+    color: white;
 }
 
 .chat-content {
@@ -216,6 +274,18 @@ body {
     padding: 2rem;
     overflow-y: auto;
     background: var(--bg-color);
+}
+
+.welcome-message {
+    text-align: center;
+    color: #7f8c8d;
+    padding: 2rem;
+}
+
+.copyright-small {
+    font-size: 0.8rem;
+    margin-top: 1rem;
+    color: #999;
 }
 
 .message {
@@ -250,6 +320,12 @@ body {
     background: #f8f7ff;
 }
 
+.message.system-message {
+    border-right-color: #10b981;
+    background: #ecfdf5;
+    text-align: center;
+}
+
 .message-header {
     display: flex;
     align-items: center;
@@ -275,6 +351,11 @@ body {
     border-radius: 10px;
     margin: 0.5rem 0;
     cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.message-image:hover {
+    transform: scale(1.05);
 }
 
 .message-time {
@@ -307,6 +388,7 @@ body {
 
 .message-options button:hover, .message-options select:hover {
     border-color: var(--primary-red);
+    transform: translateY(-1px);
 }
 
 .message-form {
@@ -326,6 +408,7 @@ body {
 .message-form input:focus {
     border-color: var(--primary-red);
     outline: none;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
 .message-form button {
@@ -344,20 +427,107 @@ body {
     transform: translateY(-2px);
 }
 
-.ads-container {
-    background: var(--bg-color);
-    padding: 1rem;
+/* حقوق الطبع والنشر */
+.copyright-footer {
+    background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%);
+    color: white;
+    padding: 1.5rem 2rem;
     text-align: center;
+    border-top: 3px solid #dc2626;
 }
 
-.ad-placeholder {
-    background: linear-gradient(135deg, #ffeb3b 0%, #fbc02d 100%);
-    padding: 1.5rem;
-    border-radius: 10px;
+.copyright-container p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.copyright-links {
+    margin-top: 1rem;
+}
+
+.copyright-links a {
+    color: #fecaca;
+    text-decoration: none;
+    margin: 0 0.5rem;
+    transition: color 0.3s;
+}
+
+.copyright-links a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+/* النافذة المنبثقة */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 600px;
+    position: relative;
+    animation: slideIn 0.3s;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.close {
+    color: #aaa;
+    float: left;
+    font-size: 2rem;
     font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close:hover {
+    color: #dc2626;
+}
+
+.modal-text {
+    line-height: 1.8;
     color: #333;
-    max-width: 728px;
-    margin: 0 auto;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.modal-text h4 {
+    color: var(--dark-red);
+    margin: 1rem 0 0.5rem 0;
+}
+
+.modal-text ul {
+    margin-right: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.modal-text li {
+    margin-bottom: 0.5rem;
+}
+
+.modal-text hr {
+    margin: 1.5rem 0;
+    border: 1px solid #e5e5e5;
 }
 
 /* تصميم متجاوب */
@@ -375,5 +545,35 @@ body {
     
     .login-container {
         padding: 2rem;
+        margin: 1rem;
+    }
+    
+    .chat-header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .header-right {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .header-right button {
+        margin-left: 0;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .message-form {
+        flex-direction: column;
+    }
+    
+    .copyright-footer {
+        padding: 1rem;
+    }
+    
+    .copyright-container p {
+        font-size: 0.8rem;
     }
 }
