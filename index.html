@@ -4,17 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>موقع موب العالمي للدردشة - © 2024</title>
-    <meta name="description" content="منصة دردشة عالمية آمنة ومتطورة">
+    <meta name="description" content="منصة دردشة عربية آمنة ومتطورة">
     <meta name="author" content="المطور: [أدخل اسمك هنا]">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- 🌟 الخلفيات المتحركة -->
+    <div class="stars-bg" id="stars-bg"></div>
+    <div class="moving-lights">
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+    </div>
+
     <!-- شاشة تسجيل الدخول -->
     <div id="login-screen" class="screen active">
-        <div class="animated-bg"></div>
-        <div class="login-container fade-in">
-            <!-- الشعار والصورة -->
-            <div class="site-logo">
+        <div class="login-container glow-in">
+            <!-- الشعار مع تأثيرات متطورة -->
+            <div class="logo-container">
+                <div class="logo-glow"></div>
                 <img src="https://i.top4top.io/p_3583q2vy21.jpg" 
                      alt="شعار موب العالمي" 
                      class="logo-image">
@@ -24,11 +32,11 @@
             
             <div class="login-options">
                 <!-- الدخول بالاسم والكود -->
-                <div class="login-option">
+                <div class="login-option glass-card">
                     <h3>🔐 تسجيل الدخول</h3>
-                    <input type="text" id="login-username" placeholder="اسم المستخدم" maxlength="20">
-                    <input type="text" id="login-code" placeholder="كود الدخول" maxlength="10">
-                    <button onclick="loginWithCredentials()">دخول إلى الدردشة</button>
+                    <input type="text" id="login-username" class="glow-input" placeholder="اسم المستخدم" maxlength="20">
+                    <input type="text" id="login-code" class="glow-input" placeholder="كود الدخول" maxlength="20">
+                    <button class="glow-button" onclick="loginWithCredentials()">دخول إلى الدردشة</button>
                     <div class="login-info">
                         <small>أدخل اسم المستخدم وكود الدخول</small>
                     </div>
@@ -39,23 +47,23 @@
                 </div>
                 
                 <!-- إنشاء حساب جديد -->
-                <div class="login-option">
+                <div class="login-option glass-card">
                     <h3>🎯 إنشاء حساب جديد</h3>
-                    <input type="text" id="new-username" placeholder="اختر اسم مستخدم" maxlength="20">
-                    <input type="password" id="new-password" placeholder="اختر كلمة مرور قوية">
-                    <button onclick="createAccount()">إنشاء حساب جديد</button>
+                    <input type="text" id="new-username" class="glow-input" placeholder="اختر اسم مستخدم" maxlength="20">
+                    <input type="password" id="new-password" class="glow-input" placeholder="اختر كلمة مرور قوية">
+                    <button class="glow-button" onclick="createAccount()">إنشاء حساب جديد</button>
                     <div class="login-info">
-                        <small>يمكنك إنشاء حساب واحد فقط كل أسبوع من نفس الجهاز</small>
+                        <small>يمكنك إنشاء حساب واحد فقط من نفس الجهاز</small>
                     </div>
                     <div id="username-feedback" class="feedback"></div>
                     <div id="password-feedback" class="feedback"></div>
                 </div>
 
                 <!-- رسالة للمدير -->
-                <div class="contact-admin">
+                <div class="contact-admin glass-card">
                     <h3>📩 رسالة للمدير</h3>
-                    <textarea id="admin-message" placeholder="اكتب رسالتك للمدير هنا..." maxlength="500" rows="3"></textarea>
-                    <button onclick="sendMessageToAdmin()">إرسال للمدير</button>
+                    <textarea id="admin-message" class="glow-input" placeholder="اكتب رسالتك للمدير هنا..." maxlength="500" rows="3"></textarea>
+                    <button class="glow-button" onclick="sendMessageToAdmin()">إرسال للمدير</button>
                     <div class="login-info">
                         <small>للاستفسارات أو المشاكل التقنية</small>
                     </div>
@@ -63,19 +71,20 @@
             </div>
             
             <!-- معلومات الحماية -->
-            <div class="security-notice">
+            <div class="security-notice glass-card">
                 <h4>🛡️ نصائح أمان:</h4>
                 <ul>
                     <li>لا تشارك كود الدخول مع أي شخص</li>
                     <li>اختر كلمة مرور قوية</li>
-                    <li>حساب واحد فقط كل أسبوع من نفس الجهاز</li>
+                    <li>حساب واحد فقط من نفس الجهاز</li>
                     <li>الرسائل خاصة وآمنة</li>
+                    <li>النظام محمي ضد الهجمات الإلكترونية</li>
                 </ul>
             </div>
 
             <!-- حقوق الطبع -->
-            <div class="copyright-notice">
-                © 2024 موقع موب العالمي للدردشة - جميع الحقوق محفوظة
+            <div class="copyright-notice glass-card">
+                © 2025 موقع موب العالمي للدردشة - جميع الحقوق محفوظة
             </div>
         </div>
     </div>
@@ -83,14 +92,14 @@
     <!-- شاشة الدردشة الرئيسية -->
     <div id="chat-screen" class="screen">
         <div class="chat-container">
-            <!-- الهيدر -->
+            <!-- الهيدر مع تأثيرات -->
             <header class="chat-header">
                 <div class="header-left">
                     <div class="header-logo">
                         <img src="https://i.top4top.io/p_3583q2vy21.jpg" alt="الشعار" class="header-logo-image">
                         <div>
                             <h1>موقع موب العالمي</h1>
-                            <div class="room-info" id="room-info">الغرفة الرئيسية</div>
+                            <div class="room-info" id="room-info">🌍 الغرفة العالمية الرئيسية</div>
                         </div>
                     </div>
                     <div class="user-status">
@@ -99,54 +108,55 @@
                     </div>
                 </div>
                 <div class="header-right">
-                    <button id="rooms-btn" onclick="toggleRoomsList()">🌍 الغرف</button>
-                    <button id="users-list-btn" onclick="toggleUsersList()">👥 المستخدمين</button>
-                    <button id="admin-panel-btn" style="display: none;" onclick="showAdminPanel()">👑 لوحة التحكم</button>
-                    <button id="admin-messages-btn" style="display: none;" onclick="showAdminMessages()">📩 رسائل المستخدمين</button>
-                    <button id="logout-btn" onclick="logout()">خروج</button>
+                    <button class="glow-button" id="rooms-btn" onclick="toggleRoomsList()">🌍 الغرف</button>
+                    <button class="glow-button" id="users-list-btn" onclick="toggleUsersList()">👥 المستخدمين</button>
+                    <button class="glow-button premium-badge" id="admin-panel-btn" style="display: none;" onclick="showAdminPanel()">👑 لوحة التحكم</button>
+                    <button class="glow-button" id="admin-messages-btn" style="display: none;" onclick="showAdminMessages()">📩 الرسائل</button>
+                    <button class="glow-button" id="logout-btn" onclick="logout()">خروج</button>
                 </div>
             </header>
             
             <!-- المنطقة الرئيسية -->
             <div class="chat-main">
                 <!-- قائمة الغرف -->
-                <div id="rooms-sidebar" class="rooms-sidebar">
+                <div id="rooms-sidebar" class="rooms-sidebar custom-scrollbar">
                     <div class="sidebar-header">
                         <h3>🌍 غرف الدردشة</h3>
-                        <button id="create-room-btn" style="display: none;" onclick="showCreateRoomForm()">+ غرفة جديدة</button>
+                        <button class="glow-button" id="create-room-btn" style="display: none;" onclick="showCreateRoomForm()">+ غرفة جديدة</button>
                     </div>
                     <div id="rooms-list"></div>
                 </div>
 
                 <!-- قائمة المستخدمين -->
-                <div id="users-sidebar" class="users-sidebar">
+                <div id="users-sidebar" class="users-sidebar custom-scrollbar">
                     <h3>👥 المستخدمين المتصلين</h3>
                     <div id="users-list"></div>
                 </div>
                 
                 <!-- منطقة الرسائل -->
                 <div class="chat-content">
-                    <div class="chat-messages" id="messages">
-                        <div class="welcome-message">
+                    <div class="chat-messages custom-scrollbar" id="messages">
+                        <div class="welcome-message glass-card">
                             <img src="https://i.top4top.io/p_3583q2vy21.jpg" alt="مرحباً" class="welcome-logo">
                             <h3>مرحباً بك في موقع موب العالمي! 👋</h3>
                             <p>اختر غرفة دردشة من القائمة لبدء المحادثة</p>
-                            <p class="copyright-small">© 2024 موقع موب العالمي للدردشة - جميع الحقوق محفوظة</p>
+                            <div class="progress-bar" style="margin: 1rem 0;"></div>
+                            <p class="copyright-small">© 2025 موقع موب العالمي للدردشة - جميع الحقوق محفوظة</p>
                         </div>
                     </div>
                     
                     <!-- أدوات الإرسال -->
                     <div class="chat-tools">
                         <div class="message-options">
-                            <button id="private-btn" onclick="togglePrivateMode()">🔒 خاص</button>
-                            <select id="user-select" style="display: none;">
+                            <button class="glow-button" id="private-btn" onclick="togglePrivateMode()">🔒 خاص</button>
+                            <select id="user-select" class="glow-input" style="display: none;">
                                 <option value="">اختر مستخدم</option>
                             </select>
                         </div>
                         
                         <form id="message-form" class="message-form">
-                            <input type="text" id="message-input" placeholder="اكتب رسالتك هنا..." maxlength="500" disabled>
-                            <button type="submit" disabled>إرسال 🚀</button>
+                            <input type="text" id="message-input" class="glow-input" placeholder="اكتب رسالتك هنا..." maxlength="500" disabled>
+                            <button type="submit" class="glow-button" disabled>إرسال 🚀</button>
                         </form>
                     </div>
                 </div>
@@ -155,8 +165,8 @@
             <!-- حقوق الطبع والنشر -->
             <footer class="copyright-footer">
                 <div class="copyright-container">
-                    <p>© 2024 <strong>موقع موب العالمي للدردشة</strong>. جميع الحقوق محفوظة.</p>
-                    <p>تم التطوير بواسطة: [أدخل اسمك هنا] - يمنع النسخ أو التوزيع بدون إذن كتابي</p>
+                    <p>© 2025 <strong>موقع موب العالمي للدردشة</strong>. جميع الحقوق محفوظة.</p>
+                    <p>تم التطوير بواسطة: [أدخل اسمك هنا] - يمنع النسخ أو التوزيع</p>
                     <div class="copyright-links">
                         <a href="#" onclick="showCopyrightInfo()">📜 شروط الاستخدام</a>
                         <span>|</span>
@@ -171,10 +181,10 @@
 
     <!-- نافذة حقوق الطبع -->
     <div id="copyright-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content glass-card">
             <span class="close" onclick="closeModal()">&times;</span>
             <h2 id="modal-title">📜 حقوق الطبع والنشر</h2>
-            <div class="modal-text" id="modal-text">
+            <div class="modal-text custom-scrollbar" id="modal-text">
                 <!-- سيتم تعبئته بالجافاسكريبت -->
             </div>
         </div>
@@ -182,29 +192,40 @@
 
     <!-- نافذة إنشاء غرفة -->
     <div id="create-room-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content glass-card">
             <span class="close" onclick="closeCreateRoomModal()">&times;</span>
             <h2>🌍 إنشاء غرفة جديدة</h2>
             <div class="modal-text">
                 <form id="create-room-form">
-                    <input type="text" id="room-name" placeholder="اسم الغرفة" maxlength="30" required>
-                    <select id="room-country" required>
+                    <input type="text" id="room-name" class="glow-input" placeholder="اسم الغرفة" maxlength="30" required>
+                    <select id="room-country" class="glow-input" required>
                         <option value="">اختر الدولة</option>
+                        <option value="palestine">🇵🇸 فلسطين</option>
                         <option value="saudi">🇸🇦 السعودية</option>
                         <option value="uae">🇦🇪 الإمارات</option>
                         <option value="egypt">🇪🇬 مصر</option>
                         <option value="qatar">🇶🇦 قطر</option>
                         <option value="kuwait">🇰🇼 الكويت</option>
                         <option value="bahrain">🇧🇭 البحرين</option>
-                        <option value="jordan">ا</option>
                         <option value="oman">🇴🇲 عمان</option>
+                        <option value="yemen">🇾🇪 اليمن</option>
+                        <option value="syria">🇸🇾 سوريا</option>
+                        <option value="iraq">🇮🇶 العراق</option>
                         <option value="jordan">🇯🇴 الأردن</option>
-                        <option value="jordan">dz الجزائر</option>
                         <option value="lebanon">🇱🇧 لبنان</option>
+                        <option value="libya">🇱🇾 ليبيا</option>
+                        <option value="tunisia">🇹🇳 تونس</option>
+                        <option value="algeria">🇩🇿 الجزائر</option>
+                        <option value="morocco">🇲🇦 المغرب</option>
+                        <option value="sudan">🇸🇩 السودان</option>
+                        <option value="somalia">🇸🇴 الصومال</option>
+                        <option value="mauritania">🇲🇷 موريتانيا</option>
+                        <option value="comoros">🇰🇲 جزر القمر</option>
+                        <option value="djibouti">🇩🇯 جيبوتي</option>
                         <option value="global">🌍 العالمية</option>
                     </select>
-                    <textarea id="room-description" placeholder="وصف الغرفة (اختياري)" maxlength="200" rows="3"></textarea>
-                    <button type="submit">إنشاء الغرفة</button>
+                    <textarea id="room-description" class="glow-input" placeholder="وصف الغرفة (اختياري)" maxlength="200" rows="3"></textarea>
+                    <button type="submit" class="glow-button">إنشاء الغرفة</button>
                 </form>
             </div>
         </div>
@@ -213,45 +234,85 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
 
-    <!-- حماية حقوق الطبع -->
+    <!-- JavaScript لإنشاء النجوم -->
     <script>
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-        showProtectionAlert('🚫 حقوق الطبع والنشر محفوظة - يمنع النسخ');
-    });
-
-    document.addEventListener('keydown', function(e) {
-        if (
-            (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's')) || 
-            e.key === 'F12' ||
-            (e.ctrlKey && e.shiftKey && e.key === 'I')
-        ) {
-            e.preventDefault();
-            showProtectionAlert('🚫 هذا الإجراء غير مسموح - حقوق الطبع محفوظة');
+        // إنشاء النجوم المتحركة
+        function createStars() {
+            const starsBg = document.getElementById('stars-bg');
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // مواقع عشوائية
+                const size = Math.random() * 3 + 1;
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const delay = Math.random() * 5;
+                
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${left}%`;
+                star.style.top = `${top}%`;
+                star.style.animationDelay = `${delay}s`;
+                
+                starsBg.appendChild(star);
+            }
         }
-    });
 
-    function showProtectionAlert(message) {
-        const alertDiv = document.createElement('div');
-        alertDiv.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #dc2626;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 10px;
-            z-index: 10000;
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        `;
-        alertDiv.textContent = message;
-        document.body.appendChild(alertDiv);
-        
-        setTimeout(() => {
-            document.body.removeChild(alertDiv);
-        }, 3000);
-    }
+        // تشغيل عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            
+            // تأثيرات إضافية للواجهة
+            const elements = document.querySelectorAll('.glow-in');
+            elements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.2}s`;
+            });
+        });
+
+        // حماية حقوق الطبع
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            showProtectionAlert('🚫 - يمنع النسخ');
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (
+                (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's')) || 
+                e.key === 'F12' ||
+                (e.ctrlKey && e.shiftKey && e.key === 'I')
+            ) {
+                e.preventDefault();
+                showProtectionAlert('🚫 هذا الإجراء غير مسموح -');
+            }
+        });
+
+        function showProtectionAlert(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #dc2626, #ef4444);
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 10px;
+                z-index: 10000;
+                font-weight: bold;
+                box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
+                animation: glowIn 0.5s ease-out;
+            `;
+            alertDiv.textContent = message;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    document.body.removeChild(alertDiv);
+                }
+            }, 3000);
+        }
     </script>
 </body>
 </html>
