@@ -4,7 +4,6 @@ const socketIo = require('socket.io');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
-const crypto = require('crypto');
 
 const app = express();
 const server = http.createServer(app);
@@ -12,7 +11,10 @@ const io = socketIo(server, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"]
-  }
+  },
+  pingTimeout: 60000,
+  pingInterval: 25000,
+  transports: ['websocket', 'polling']
 });
 
 const PORT = process.env.PORT || 3000;
@@ -20,7 +22,7 @@ const PORT = process.env.PORT || 3000;
 // 🔒 حماية حقوق الطبع والنشر
 console.log(`
 ╔═════════════════════════════════════════════════╗
-║              🚀 موقع موب العالمي              ║
+║              🚀 موقع MOBO العالمي              ║
 ║            © 2025 جميع الحقوق محفوظة           ║
 ║           تم الانشاء بواسطة: MOBO              ║
 ║             يمنع النسخ أو التوزيع              ║
@@ -30,16 +32,19 @@ console.log(`
 app.use(express.static(path.join(__dirname)));
 app.use(express.json({ limit: '10mb' }));
 
+// Route رئيسي
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // تخزين البيانات
 const users = new Map();
 const userProfiles = new Map();
 const verifiedUsers = new Set();
 const rooms = new Map();
-const adminMessages = [];
-const userSessions = new Map();
 const mutedUsers = new Map();
 const bannedUsers = new Map();
-const privateMessages = new Map();
+const onlineUsers = new Map();
 
 // 🏴 جميع الدول العربية
 const arabCountries = {
@@ -70,19 +75,18 @@ const arabCountries = {
 
 // 👑 إنشاء الأدمن الرئيسي
 const createSuperAdmin = () => {
-  const adminId = 'admin_mobo_global_' + Date.now();
-  const adminPassword = 'admin123'; // كلمة مرور بسيطة للتجربة
+  const adminId = 'admin_mobo_' + Date.now();
+  const adminPassword = 'Mobo@2025';
 
   const adminUser = {
     id: adminId,
     username: 'MOBO',
-    password: bcrypt.hashSync(adminPassword, 12),
+    password: bcrypt.hashSync(adminPassword, 10),
     isAdmin: true,
     isSuperAdmin: true,
     isVerified: true,
     joinDate: new Date(),
     lastActive: new Date(),
-    permissions: ['all'],
     displayName: '👑 MOBO'
   };
 
@@ -92,19 +96,17 @@ const createSuperAdmin = () => {
     avatar: '👑',
     status: 'مطور ومالك الموقع',
     country: 'global',
-    joinDate: new Date(),
-    lastSeen: new Date()
+    joinDate: new Date()
   };
 
   users.set(adminId, adminUser);
   userProfiles.set(adminId, adminProfile);
 
   console.log(`
-  🔐 بيانات الدخول كمدير نظام:
+  🔐 بيانات دخول المدير:
   ┌─────────────────────────────────────┐
-  │  🎯 اسم المستخدم: MOBO             │
-  │  🗝️  كلمة المرور: ${adminPassword} │
-  │  🆔 المعرف: ${adminId}              │
+  │  اسم المستخدم: MOBO                │
+  │  كلمة المرور: ${adminPassword}      │
   └─────────────────────────────────────┘
   `);
 
@@ -116,9 +118,9 @@ const createDefaultRooms = () => {
   const defaultRooms = [
     {
       id: 'global_main',
-      name: '🌍 الغرفة العالمية الرئيسية - MOBO',
+      name: '🌍 الغرفة العالمية - MOBO',
       country: 'global',
-      description: 'الغرفة الرئيسية العالمية - MOBO © 2025',
+      description: 'الغرفة الرئيسية العالمية © 2025',
       createdBy: 'MOBO',
       createdAt: new Date(),
       users: new Set(),
@@ -127,10 +129,10 @@ const createDefaultRooms = () => {
       isGlobal: true
     },
     {
-      id: 'palestine_free',
+      id: 'palestine',
       name: '🇵🇸 غرفة فلسطين الحرة',
       country: 'palestine',
-      description: 'لأبناء فلسطين الأحرار حول العالم',
+      description: 'لأبناء فلسطين الأحرار',
       createdBy: 'system',
       createdAt: new Date(),
       users: new Set(),
@@ -138,10 +140,21 @@ const createDefaultRooms = () => {
       isActive: true
     },
     {
-      id: 'saudi_kingdom',
-      name: '🇸🇦 غرفة المملكة العربية السعودية',
+      id: 'saudi',
+      name: '🇸🇦 غرفة السعودية',
       country: 'saudi',
-      description: 'لأبناء المملكة العربية السعودية',
+      description: 'للمملكة العربية السعودية',
+      createdBy: 'system',
+      createdAt: new Date(),
+      users: new Set(),
+      messages: [],
+      isActive: true
+    },
+    {
+      id: 'egypt',
+      name: '🇪🇬 غرفة مصر',
+      country: 'egypt',
+      description: 'أم الدنيا',
       createdBy: 'system',
       createdAt: new Date(),
       users: new Set(),
@@ -159,170 +172,278 @@ const createDefaultRooms = () => {
 createSuperAdmin();
 createDefaultRooms();
 
-// 🔧 نظام الإدارة المتقدم
-io.on('connection', (socket) => {
-  const clientIP = socket.handshake.address;
-  console.log('🔗 اتصال جديد من:', clientIP);
-
-  // 🔐 تسجيل الدخول باسم المستخدم وكلمة المرور
-  socket.on('login-with-credentials', (data) => {
-    console.log('🔐 محاولة دخول:', data.username);
-    
-    let userFound = null;
-    let userIdFound = null;
-
-    // البحث في جميع المستخدمين
-    for (const [userId, user] of users.entries()) {
-      console.log(`🔍 التحقق: ${user.username}`);
-      
-      if (user.username === data.username && bcrypt.compareSync(data.password, user.password)) {
-        userFound = user;
-        userIdFound = userId;
-        console.log('✅ تم العثور على المستخدم:', user.username);
-        break;
-      }
-    }
-
-    if (userFound && userIdFound) {
-      userFound.lastActive = new Date();
-      socket.userId = userIdFound;
-      socket.userData = userFound;
-
-      console.log('✅ إرسال بيانات النجاح للمستخدم:', userFound.username);
-      
-      socket.emit('login-success', {
-        id: userIdFound,
-        username: userFound.username,
-        displayName: userFound.displayName || userFound.username,
-        isAdmin: userFound.isAdmin,
-        isSuperAdmin: userFound.isSuperAdmin,
-        isVerified: userFound.isVerified,
-        profile: userProfiles.get(userIdFound) || {}
+// دالة تنظيف المستخدمين غير النشطين
+setInterval(() => {
+  const now = Date.now();
+  for (const [userId, lastSeen] of onlineUsers.entries()) {
+    if (now - lastSeen > 300000) { // 5 دقائق
+      onlineUsers.delete(userId);
+      // إزالة من جميع الغرف
+      rooms.forEach(room => {
+        room.users.delete(userId);
       });
+    }
+  }
+}, 60000); // كل دقيقة
 
-      // الانضمام للغرفة العالمية تلقائياً
-      const globalRoom = rooms.get('global_main');
-      if (globalRoom) {
-        globalRoom.users.add(userIdFound);
-        socket.join('global_main');
-        socket.currentRoom = 'global_main';
+// 🔧 نظام Socket.io
+io.on('connection', (socket) => {
+  console.log('🔗 اتصال جديد:', socket.id);
 
-        // إرسال بيانات الغرفة
-        socket.emit('room-joined', {
-          roomId: 'global_main',
-          roomName: globalRoom.name,
-          messages: globalRoom.messages.slice(-100),
-          userCount: globalRoom.users.size
-        });
+  // 🔐 تسجيل الدخول
+  socket.on('login-with-credentials', (data) => {
+    try {
+      const { username, password } = data;
+      
+      if (!username || !password) {
+        socket.emit('login-failed', 'الرجاء إدخال اسم المستخدم وكلمة المرور');
+        return;
       }
 
-      console.log(`✅ دخول ناجح: ${userFound.username}`);
-    } else {
-      console.log('❌ فشل الدخول: بيانات غير صحيحة');
-      socket.emit('login-failed', 'اسم المستخدم أو كلمة المرور غير صحيحة');
+      let userFound = null;
+      let userIdFound = null;
+
+      for (const [userId, user] of users.entries()) {
+        if (user.username === username) {
+          if (bcrypt.compareSync(password, user.password)) {
+            userFound = user;
+            userIdFound = userId;
+            break;
+          }
+        }
+      }
+
+      if (userFound && userIdFound) {
+        // التحقق من الحظر
+        if (bannedUsers.has(userIdFound)) {
+          socket.emit('login-failed', 'تم حظرك من الموقع');
+          return;
+        }
+
+        userFound.lastActive = new Date();
+        socket.userId = userIdFound;
+        socket.userData = userFound;
+        onlineUsers.set(userIdFound, Date.now());
+
+        socket.emit('login-success', {
+          id: userIdFound,
+          username: userFound.username,
+          displayName: userFound.displayName || userFound.username,
+          isAdmin: userFound.isAdmin || false,
+          isSuperAdmin: userFound.isSuperAdmin || false,
+          isVerified: userFound.isVerified || false,
+          profile: userProfiles.get(userIdFound) || {}
+        });
+
+        // الانضمام للغرفة العالمية
+        const globalRoom = rooms.get('global_main');
+        if (globalRoom) {
+          globalRoom.users.add(userIdFound);
+          socket.join('global_main');
+          socket.currentRoom = 'global_main';
+
+          socket.emit('room-joined', {
+            roomId: 'global_main',
+            roomName: globalRoom.name,
+            messages: globalRoom.messages.slice(-50),
+            userCount: globalRoom.users.size
+          });
+
+          // إرسال قائمة الغرف
+          updateRoomsList(socket);
+          
+          // إرسال قائمة المستخدمين
+          updateUsersList('global_main');
+        }
+
+        console.log(`✅ دخول ناجح: ${userFound.username}`);
+      } else {
+        socket.emit('login-failed', 'اسم المستخدم أو كلمة المرور غير صحيحة');
+      }
+    } catch (error) {
+      console.error('خطأ في تسجيل الدخول:', error);
+      socket.emit('login-failed', 'حدث خطأ في تسجيل الدخول');
     }
   });
 
-  // 📝 إنشاء حساب جديد
+  // 📝 إنشاء حساب
   socket.on('create-account', (data) => {
-    const username = data.username.trim();
-    const password = data.password;
-    const gender = data.gender || 'male';
+    try {
+      const { username, password, gender } = data;
 
-    // التحقق من الأسماء المحجوزة
-    const reservedNames = ['admin', 'administrator', 'moderator', 'مدير', 'مشرف', 'system', 'نظام', 'MOBO'];
-    if (reservedNames.includes(username.toLowerCase())) {
-      socket.emit('account-error', 'اسم المستخدم محجوز ولا يمكن استخدامه');
-      return;
-    }
-
-    // التحقق من صحة الاسم
-    if (username.length < 3 || username.length > 20) {
-      socket.emit('account-error', 'اسم المستخدم يجب أن يكون بين 3 و 20 حرف');
-      return;
-    }
-
-    // التحقق من عدم تكرار الاسم
-    for (const user of users.values()) {
-      if (user.username.toLowerCase() === username.toLowerCase()) {
-        socket.emit('account-error', 'اسم المستخدم موجود مسبقاً');
+      if (!username || !password) {
+        socket.emit('account-error', 'الرجاء ملء جميع الحقول');
         return;
       }
+
+      // التحقق من طول الاسم
+      if (username.length < 3 || username.length > 20) {
+        socket.emit('account-error', 'اسم المستخدم يجب أن يكون بين 3 و 20 حرف');
+        return;
+      }
+
+      // التحقق من كلمة المرور
+      if (password.length < 4) {
+        socket.emit('account-error', 'كلمة المرور قصيرة جداً');
+        return;
+      }
+
+      // التحقق من تكرار الاسم
+      for (const user of users.values()) {
+        if (user.username.toLowerCase() === username.toLowerCase()) {
+          socket.emit('account-error', 'اسم المستخدم موجود مسبقاً');
+          return;
+        }
+      }
+
+      // إنشاء الحساب
+      const userId = uuidv4();
+      const hashedPassword = bcrypt.hashSync(password, 10);
+
+      const newUser = {
+        id: userId,
+        username: username,
+        password: hashedPassword,
+        isAdmin: false,
+        isSuperAdmin: false,
+        isVerified: false,
+        joinDate: new Date(),
+        lastActive: new Date(),
+        displayName: username
+      };
+
+      const userProfile = {
+        userId: userId,
+        gender: gender || 'male',
+        avatar: gender === 'female' ? '👩' : '👨',
+        status: 'متصل حديثاً',
+        country: 'global',
+        joinDate: new Date()
+      };
+
+      users.set(userId, newUser);
+      userProfiles.set(userId, userProfile);
+
+      socket.emit('account-created', {
+        username: username,
+        message: 'تم إنشاء حسابك بنجاح! يمكنك الآن تسجيل الدخول'
+      });
+
+      console.log(`✅ حساب جديد: ${username}`);
+    } catch (error) {
+      console.error('خطأ في إنشاء الحساب:', error);
+      socket.emit('account-error', 'حدث خطأ في إنشاء الحساب');
     }
-
-    // التحقق من كلمة المرور
-    if (password.length < 4 || password.length > 50) {
-      socket.emit('account-error', 'كلمة المرور يجب أن تكون بين 4 و 50 حرف');
-      return;
-    }
-
-    // ✅ إنشاء الحساب والملف الشخصي
-    const userId = uuidv4();
-
-    const newUser = {
-      id: userId,
-      username: username,
-      password: bcrypt.hashSync(password, 12),
-      isAdmin: false,
-      isSuperAdmin: false,
-      isVerified: false,
-      joinDate: new Date(),
-      lastActive: new Date(),
-      displayName: username
-    };
-
-    const userProfile = {
-      userId: userId,
-      gender: gender,
-      avatar: gender === 'male' ? '👨' : '👩',
-      status: 'متصل حديثاً',
-      country: 'global',
-      joinDate: new Date(),
-      lastSeen: new Date()
-    };
-
-    users.set(userId, newUser);
-    userProfiles.set(userId, userProfile);
-
-    socket.emit('account-created', {
-      username: username,
-      message: `🎉 تم إنشاء حسابك بنجاح! يمكنك الآن تسجيل الدخول باسم المستخدم وكلمة المرور`
-    });
-
-    console.log(`🎯 حساب جديد: ${username} من ${clientIP}`);
   });
 
   // 💬 إرسال رسالة
   socket.on('send-message', (data) => {
-    const user = users.get(socket.userId);
-    if (!user || !socket.currentRoom) return;
+    try {
+      const user = users.get(socket.userId);
+      if (!user || !socket.currentRoom) return;
 
-    const room = rooms.get(socket.currentRoom);
-    if (!room) return;
+      // التحقق من الكتم
+      const muteInfo = mutedUsers.get(socket.userId);
+      if (muteInfo && muteInfo.expires > Date.now()) {
+        socket.emit('message-error', 'أنت مكتوم حالياً');
+        return;
+      }
 
-    const message = {
-      id: uuidv4(),
-      user: user.username,
-      userId: socket.userId,
-      text: data.text.trim(),
-      timestamp: new Date().toLocaleTimeString('ar-EG'),
-      fullTimestamp: new Date(),
-      isAdmin: user.isAdmin,
-      isSuperAdmin: user.isSuperAdmin,
-      isVerified: verifiedUsers.has(socket.userId),
-      roomId: socket.currentRoom,
-      userProfile: userProfiles.get(socket.userId)
-    };
+      const room = rooms.get(socket.currentRoom);
+      if (!room) return;
 
-    room.messages.push(message);
-    if (room.messages.length > 1000) {
-      room.messages = room.messages.slice(-500);
+      const message = {
+        id: uuidv4(),
+        user: user.username,
+        userId: socket.userId,
+        text: data.text.trim().substring(0, 500),
+        timestamp: new Date().toLocaleTimeString('ar-EG', {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        fullTimestamp: new Date(),
+        isAdmin: user.isAdmin || false,
+        isSuperAdmin: user.isSuperAdmin || false,
+        isVerified: user.isVerified || false,
+        roomId: socket.currentRoom,
+        userProfile: userProfiles.get(socket.userId)
+      };
+
+      room.messages.push(message);
+      
+      // الاحتفاظ بآخر 500 رسالة فقط
+      if (room.messages.length > 500) {
+        room.messages = room.messages.slice(-500);
+      }
+
+      io.to(socket.currentRoom).emit('new-message', message);
+      
+      // تحديث آخر نشاط
+      onlineUsers.set(socket.userId, Date.now());
+    } catch (error) {
+      console.error('خطأ في إرسال الرسالة:', error);
     }
-
-    io.to(socket.currentRoom).emit('new-message', message);
   });
 
-  // 👑 نظام إدارة الأدمن
+  // 🚪 الانضمام لغرفة
+  socket.on('join-room', (data) => {
+    try {
+      const user = users.get(socket.userId);
+      if (!user) return;
+
+      const room = rooms.get(data.roomId);
+      if (!room) {
+        socket.emit('error', 'الغرفة غير موجودة');
+        return;
+      }
+
+      // مغادرة الغرفة السابقة
+      if (socket.currentRoom) {
+        const previousRoom = rooms.get(socket.currentRoom);
+        if (previousRoom) {
+          previousRoom.users.delete(socket.userId);
+          socket.leave(socket.currentRoom);
+          updateUsersList(socket.currentRoom);
+        }
+      }
+
+      // الانضمام للغرفة الجديدة
+      room.users.add(socket.userId);
+      socket.join(data.roomId);
+      socket.currentRoom = data.roomId;
+
+      socket.emit('room-joined', {
+        roomId: room.id,
+        roomName: room.name,
+        messages: room.messages.slice(-50),
+        userCount: room.users.size
+      });
+
+      updateUsersList(data.roomId);
+      updateRoomsList();
+    } catch (error) {
+      console.error('خطأ في الانضمام للغرفة:', error);
+    }
+  });
+
+  // 📋 الحصول على الغرف
+  socket.on('get-rooms', () => {
+    updateRoomsList(socket);
+  });
+
+  // 👥 الحصول على المستخدمين
+  socket.on('get-users', (data) => {
+    const roomId = data?.roomId || socket.currentRoom;
+    if (roomId) {
+      const room = rooms.get(roomId);
+      if (room) {
+        const userList = getUsersInRoom(roomId);
+        socket.emit('users-list', userList);
+      }
+    }
+  });
+
+  // 👑 كتم مستخدم (أدمن فقط)
   socket.on('admin-mute-user', (data) => {
     const admin = users.get(socket.userId);
     if (!admin || !admin.isAdmin) return;
@@ -339,9 +460,10 @@ io.on('connection', (socket) => {
       reason: data.reason
     });
 
-    socket.emit('admin-action-success', `تم كتم ${data.username} لمدة ${data.duration} دقيقة`);
+    socket.emit('admin-action-success', `تم كتم ${data.username}`);
   });
 
+  // 🚫 حظر مستخدم (أدمن فقط)
   socket.on('admin-ban-user', (data) => {
     const admin = users.get(socket.userId);
     if (!admin || !admin.isAdmin) return;
@@ -352,14 +474,19 @@ io.on('connection', (socket) => {
       bannedAt: new Date()
     });
 
-    io.to(socket.currentRoom).emit('user-banned', {
-      username: data.username,
-      reason: data.reason
-    });
+    // فصل المستخدم
+    const targetSocket = Array.from(io.sockets.sockets.values())
+      .find(s => s.userId === data.userId);
+    
+    if (targetSocket) {
+      targetSocket.emit('banned', data.reason);
+      targetSocket.disconnect();
+    }
 
     socket.emit('admin-action-success', `تم حظر ${data.username}`);
   });
 
+  // 🗑️ حذف رسالة (أدمن فقط)
   socket.on('admin-delete-message', (data) => {
     const admin = users.get(socket.userId);
     if (!admin || !admin.isAdmin) return;
@@ -371,89 +498,90 @@ io.on('connection', (socket) => {
     }
   });
 
-  // 📋 الحصول على الغرف
-  socket.on('get-rooms', () => {
-    const roomList = Array.from(rooms.values()).map(room => ({
-      ...room,
-      userCount: room.users.size,
-      countryInfo: arabCountries[room.country] || arabCountries.global
-    }));
-    
-    socket.emit('rooms-list', roomList);
-  });
-
-  // 👥 الحصول على المستخدمين
-  socket.on('get-users', (data) => {
-    const room = rooms.get(data.roomId || socket.currentRoom);
-    if (!room) return;
-    
-    const userList = Array.from(room.users).map(userId => {
-      const user = users.get(userId);
-      return user ? {
-        id: user.id,
-        username: user.username,
-        isOnline: true,
-        isVerified: verifiedUsers.has(user.id),
-        isAdmin: user.isAdmin,
-        isSuperAdmin: user.isSuperAdmin,
-        profile: userProfiles.get(userId) || {}
-      } : null;
-    }).filter(Boolean);
-    
-    socket.emit('users-list', userList);
-  });
-
-  // 🚪 الانضمام لغرفة
-  socket.on('join-room', (data) => {
-    const user = users.get(socket.userId);
-    if (!user) return;
-    
-    const room = rooms.get(data.roomId);
-    if (!room) {
-      socket.emit('error', 'الغرفة غير موجودة');
-      return;
-    }
-    
-    // مغادرة الغرفة السابقة
-    if (socket.currentRoom) {
-      const previousRoom = rooms.get(socket.currentRoom);
-      if (previousRoom) {
-        previousRoom.users.delete(socket.userId);
-        socket.leave(socket.currentRoom);
-      }
-    }
-    
-    // الانضمام للغرفة الجديدة
-    room.users.add(socket.userId);
-    socket.join(data.roomId);
-    socket.currentRoom = data.roomId;
-    
-    socket.emit('room-joined', {
-      roomId: room.id,
-      roomName: room.name,
-      messages: room.messages.slice(-100),
-      userCount: room.users.size
-    });
-    
-    // إعلام الآخرين
-    socket.to(data.roomId).emit('user-joined-room', {
-      username: user.username,
-      roomId: data.roomId
-    });
-  });
-
+  // 🔌 قطع الاتصال
   socket.on('disconnect', () => {
-    if (socket.currentRoom && socket.userId) {
-      const room = rooms.get(socket.currentRoom);
-      if (room) {
-        room.users.delete(socket.userId);
+    if (socket.userId) {
+      onlineUsers.delete(socket.userId);
+      
+      if (socket.currentRoom) {
+        const room = rooms.get(socket.currentRoom);
+        if (room) {
+          room.users.delete(socket.userId);
+          updateUsersList(socket.currentRoom);
+          updateRoomsList();
+        }
       }
     }
-    console.log(`🔌 انقطع اتصال: ${socket.userId}`);
+    console.log('🔌 قطع اتصال:', socket.id);
+  });
+
+  // تحديث النشاط
+  socket.on('ping', () => {
+    if (socket.userId) {
+      onlineUsers.set(socket.userId, Date.now());
+    }
   });
 });
 
-server.listen(PORT, () => {
+// دوال مساعدة
+function updateRoomsList(socket = null) {
+  const roomList = Array.from(rooms.values()).map(room => ({
+    id: room.id,
+    name: room.name,
+    country: room.country,
+    description: room.description,
+    userCount: room.users.size,
+    countryInfo: arabCountries[room.country] || arabCountries.global,
+    isActive: room.isActive
+  }));
+
+  if (socket) {
+    socket.emit('rooms-list', roomList);
+  } else {
+    io.emit('rooms-list', roomList);
+  }
+}
+
+function updateUsersList(roomId) {
+  const room = rooms.get(roomId);
+  if (!room) return;
+
+  const userList = getUsersInRoom(roomId);
+  io.to(roomId).emit('users-list', userList);
+}
+
+function getUsersInRoom(roomId) {
+  const room = rooms.get(roomId);
+  if (!room) return [];
+
+  return Array.from(room.users).map(userId => {
+    const user = users.get(userId);
+    if (!user) return null;
+
+    return {
+      id: user.id,
+      username: user.username,
+      displayName: user.displayName || user.username,
+      isOnline: onlineUsers.has(userId),
+      isVerified: user.isVerified || false,
+      isAdmin: user.isAdmin || false,
+      isSuperAdmin: user.isSuperAdmin || false,
+      profile: userProfiles.get(userId) || {}
+    };
+  }).filter(Boolean);
+}
+
+// Error handling
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+});
+
+process.on('unhandledRejection', (error) => {
+  console.error('❌ Unhandled Rejection:', error);
+});
+
+// 🚀 تشغيل السيرفر
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ الخادم يعمل على البورت: ${PORT}`);
   console.log(`🔗 الرابط: http://localhost:${PORT}`);
   console.log('👑 نظام MOBO جاهز للعمل');
