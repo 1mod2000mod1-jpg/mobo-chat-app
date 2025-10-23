@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة الدردشة المتطورة</title>
+    <title>منصة الدردشة الحمراء - © 2024</title>
+    <meta name="description" content="منصة دردشة عربية آمنة ومتطورة">
+    <meta name="author" content="المطور: [أدخل اسمك هنا]">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,7 +14,10 @@
         <div class="login-container">
             <div class="login-header">
                 <h1>🔴 منصة الدردشة الحمراء</h1>
-                <p>اختر طريقة الدخول</p>
+                <p>منصة دردشة عربية آمنة ومتطورة</p>
+                <div class="copyright-notice">
+                    © 2024 جميع الحقوق محفوظة
+                </div>
             </div>
             
             <div class="login-options">
@@ -53,6 +58,7 @@
                 </div>
                 <div class="header-right">
                     <button id="users-list-btn" onclick="toggleUsersList()">👥 المستخدمين</button>
+                    <button id="admin-panel-btn" style="display: none;" onclick="showAdminPanel()">👑 لوحة التحكم</button>
                     <button id="logout-btn" onclick="logout()">خروج</button>
                 </div>
             </header>
@@ -61,7 +67,7 @@
             <div class="chat-main">
                 <!-- قائمة المستخدمين -->
                 <div id="users-sidebar" class="users-sidebar">
-                    <h3>المستخدمين المتصلين</h3>
+                    <h3>👥 المستخدمين المتصلين</h3>
                     <div id="users-list"></div>
                 </div>
                 
@@ -71,6 +77,7 @@
                         <div class="welcome-message">
                             <h3>مرحباً! 👋</h3>
                             <p>ابدأ الدردشة مع الأصدقاء</p>
+                            <p class="copyright-small">© 2024 منصة الدردشة الحمراء - جميع الحقوق محفوظة</p>
                         </div>
                     </div>
                     
@@ -92,11 +99,30 @@
                 </div>
             </div>
 
-            <!-- مساحة الإعلانات -->
-            <div class="ads-container">
-                <div class="ad-placeholder" id="ad-banner">
-                    <span>🚫 مساحة إعلانية</span>
+            <!-- حقوق الطبع والنشر -->
+            <footer class="copyright-footer">
+                <div class="copyright-container">
+                    <p>© 2024 <strong>منصة الدردشة الحمراء</strong>. جميع الحقوق محفوظة.</p>
+                    <p>تم التطوير بواسطة: [أدخل اسمك هنا] - يمنع النسخ أو التوزيع بدون إذن كتابي</p>
+                    <div class="copyright-links">
+                        <a href="#" onclick="showCopyrightInfo()">📜 شروط الاستخدام</a>
+                        <span>|</span>
+                        <a href="#" onclick="showPrivacyPolicy()">🔒 سياسة الخصوصية</a>
+                        <span>|</span>
+                        <a href="#" onclick="showContactInfo()">📞 اتصل بنا</a>
+                    </div>
                 </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- نافذة حقوق الطبع -->
+    <div id="copyright-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title">📜 حقوق الطبع والنشر</h2>
+            <div class="modal-text" id="modal-text">
+                <!-- سيتم تعبئته بالجافاسكريبت -->
             </div>
         </div>
     </div>
@@ -106,5 +132,46 @@
     
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
+
+    <!-- حماية حقوق الطبع -->
+    <script>
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        showProtectionAlert('🚫 حقوق الطبع والنشر محفوظة - يمنع النسخ');
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (
+            (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's')) || 
+            e.key === 'F12' ||
+            (e.ctrlKey && e.shiftKey && e.key === 'I')
+        ) {
+            e.preventDefault();
+            showProtectionAlert('🚫 هذا الإجراء غير مسموح - حقوق الطبع محفوظة');
+        }
+    });
+
+    function showProtectionAlert(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #dc2626;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            z-index: 10000;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        `;
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            document.body.removeChild(alertDiv);
+        }, 3000);
+    }
+    </script>
 </body>
 </html>
