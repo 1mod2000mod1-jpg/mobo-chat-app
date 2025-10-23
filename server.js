@@ -33,7 +33,6 @@ app.use(express.json({ limit: '10mb' }));
 const users = new Map();
 const userProfiles = new Map();
 const rooms = new Map();
-const adminMessages = [];
 
 // 🏴 جميع الدول العربية
 const arabCountries = {
@@ -41,24 +40,6 @@ const arabCountries = {
   'saudi': { name: 'السعودية', flag: '🇸🇦', code: 'sa' },
   'uae': { name: 'الإمارات', flag: '🇦🇪', code: 'ae' },
   'egypt': { name: 'مصر', flag: '🇪🇬', code: 'eg' },
-  'qatar': { name: 'قطر', flag: '🇶🇦', code: 'qa' },
-  'kuwait': { name: 'الكويت', flag: '🇰🇼', code: 'kw' },
-  'bahrain': { name: 'البحرين', flag: '🇧🇭', code: 'bh' },
-  'oman': { name: 'عمان', flag: '🇴🇲', code: 'om' },
-  'yemen': { name: 'اليمن', flag: '🇾🇪', code: 'ye' },
-  'syria': { name: 'سوريا', flag: '🇸🇾', code: 'sy' },
-  'iraq': { name: 'العراق', flag: '🇮🇶', code: 'iq' },
-  'jordan': { name: 'الأردن', flag: '🇯🇴', code: 'jo' },
-  'lebanon': { name: 'لبنان', flag: '🇱🇧', code: 'lb' },
-  'libya': { name: 'ليبيا', flag: '🇱🇾', code: 'ly' },
-  'tunisia': { name: 'تونس', flag: '🇹🇳', code: 'tn' },
-  'algeria': { name: 'الجزائر', flag: '🇩🇿', code: 'dz' },
-  'morocco': { name: 'المغرب', flag: '🇲🇦', code: 'ma' },
-  'sudan': { name: 'السودان', flag: '🇸🇩', code: 'sd' },
-  'somalia': { name: 'الصومال', flag: '🇸🇴', code: 'so' },
-  'mauritania': { name: 'موريتانيا', flag: '🇲🇷', code: 'mr' },
-  'comoros': { name: 'جزر القمر', flag: '🇰🇲', code: 'km' },
-  'djibouti': { name: 'جيبوتي', flag: '🇩🇯', code: 'dj' },
   'global': { name: 'العالمية', flag: '🌍', code: 'global' }
 };
 
@@ -144,12 +125,17 @@ io.on('connection', (socket) => {
     // البحث في جميع المستخدمين
     for (const [userId, user] of users.entries()) {
       if (user.username === data.username) {
-        const passwordMatch = bcrypt.compareSync(data.password, user.password);
-        if (passwordMatch) {
-          userFound = user;
-          userIdFound = userId;
-          console.log('✅ تم العثور على المستخدم:', user.username);
-          break;
+        // التحقق من كلمة المرور بشكل آمن
+        try {
+          const passwordMatch = bcrypt.compareSync(data.password, user.password);
+          if (passwordMatch) {
+            userFound = user;
+            userIdFound = userId;
+            console.log('✅ تم العثور على المستخدم:', user.username);
+            break;
+          }
+        } catch (error) {
+          console.log('❌ خطأ في التحقق من كلمة المرور:', error.message);
         }
       }
     }
