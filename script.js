@@ -4,11 +4,7 @@ const socket = io();
 // حالة التطبيق
 let currentUser = null;
 let currentRoom = null;
-let isPrivateMode = false;
-let selectedUserId = null;
 let usersList = [];
-let roomsList = [];
-let userProfile = null;
 
 // عناصر DOM
 const elements = {
@@ -23,7 +19,6 @@ const elements = {
     userBadges: document.getElementById('user-badges'),
     roomInfo: document.getElementById('room-info'),
     usersList: document.getElementById('users-list'),
-    roomsList: document.getElementById('rooms-list'),
     messagesContainer: document.getElementById('messages'),
     messageInput: document.getElementById('message-input'),
     messageForm: document.getElementById('message-form')
@@ -92,8 +87,9 @@ window.logout = function() {
 
 // 🔐 تسجيل الدخول
 socket.on('login-success', (userData) => {
+    console.log('✅ تم استقبال بيانات الدخول الناجح');
+    
     currentUser = userData;
-    userProfile = userData.profile;
     
     elements.currentUser.textContent = userData.displayName;
     updateUserBadges(userData);
@@ -154,11 +150,6 @@ socket.on('users-list', (users) => {
     updateUsersList(users);
 });
 
-// 📋 تحديث قائمة الغرف
-socket.on('rooms-list', (rooms) => {
-    updateRoomsList(rooms);
-});
-
 // 🛠️ دوال مساعدة
 function addMessage(message) {
     const messageDiv = document.createElement('div');
@@ -169,9 +160,6 @@ function addMessage(message) {
         badges += '<span class="badge super-admin-badge">👑 MOBO</span>';
     } else if (message.isAdmin) {
         badges += '<span class="badge admin-badge">🔧 أدمن</span>';
-    }
-    if (message.isVerified) {
-        badges += '<span class="badge verified-badge">✅ موثق</span>';
     }
     
     messageDiv.innerHTML = `
@@ -185,9 +173,6 @@ function addMessage(message) {
         <div class="message-text">${escapeHtml(message.text)}</div>
         <div class="message-footer">
             <span class="message-time">${message.timestamp}</span>
-            ${currentUser?.isAdmin ? `
-                <button class="message-action-btn" onclick="deleteMessage('${message.id}')" title="حذف الرسالة">🗑️</button>
-            ` : ''}
         </div>
     `;
     
@@ -209,49 +194,11 @@ function updateUsersList(users) {
                     <div class="user-name">${escapeHtml(user.username)}</div>
                     <div class="user-status">${user.profile?.status || 'متصل'}</div>
                 </div>
-                <div class="user-actions">
-                    ${currentUser?.isAdmin ? `
-                        <button class="action-btn" onclick="muteUser('${user.id}', '${user.username}')" title="كتم">🔇</button>
-                        <button class="action-btn" onclick="banUser('${user.id}', '${user.username}')" title="حظر">🚫</button>
-                    ` : ''}
-                </div>
             `;
             
             elements.usersList.appendChild(userDiv);
         }
     });
-}
-
-function updateRoomsList(rooms) {
-    roomsList = rooms;
-    elements.roomsList.innerHTML = '';
-    
-    rooms.forEach(room => {
-        const roomDiv = document.createElement('div');
-        roomDiv.className = `room-item ${room.id === currentRoom ? 'active-room' : ''}`;
-        
-        roomDiv.innerHTML = `
-            <div class="room-header">
-                <div class="room-name">${room.countryInfo?.flag || '🌍'} ${escapeHtml(room.name)}</div>
-                <div class="room-country">${room.countryInfo?.name || 'العالمية'}</div>
-            </div>
-            <div class="room-stats">
-                <span>👥 ${room.userCount || 0}</span>
-            </div>
-        `;
-        
-        roomDiv.addEventListener('click', () => {
-            if (room.id !== currentRoom) {
-                joinRoom(room.id);
-            }
-        });
-        
-        elements.roomsList.appendChild(roomDiv);
-    });
-}
-
-function joinRoom(roomId) {
-    socket.emit('join-room', { roomId: roomId });
 }
 
 function updateUserBadges(userData) {
@@ -262,9 +209,6 @@ function updateUserBadges(userData) {
     } else if (userData.isAdmin) {
         badges += '<span class="badge admin-badge">🔧 أدمن</span>';
         document.getElementById('admin-panel-btn').style.display = 'block';
-    }
-    if (userData.isVerified) {
-        badges += '<span class="badge verified-badge">✅ موثق</span>';
     }
     elements.userBadges.innerHTML = badges;
 }
@@ -354,42 +298,6 @@ function hideLoading() {
     }
 }
 
-// 👑 دوال الإدارة
-window.muteUser = function(userId, username) {
-    const duration = prompt(`مدة كتم ${username} (بالدقائق):`, '10');
-    const reason = prompt(`سبب الكتم:`);
-    
-    if (duration && reason) {
-        socket.emit('admin-mute-user', {
-            userId: userId,
-            username: username,
-            duration: parseInt(duration),
-            reason: reason
-        });
-    }
-};
-
-window.banUser = function(userId, username) {
-    const reason = prompt(`سبب حظر ${username}:`);
-    
-    if (reason) {
-        socket.emit('admin-ban-user', {
-            userId: userId,
-            username: username,
-            reason: reason
-        });
-    }
-};
-
-window.deleteMessage = function(messageId) {
-    if (confirm('هل تريد حذف هذه الرسالة؟')) {
-        socket.emit('admin-delete-message', {
-            messageId: messageId,
-            roomId: currentRoom
-        });
-    }
-};
-
 // 🎯 التهيئة
 document.addEventListener('DOMContentLoaded', function() {
     // إضافة مستمعي الأحداث للزر Enter
@@ -407,4 +315,7 @@ document.addEventListener('DOMContentLoaded', function() {
             elements.messageForm.dispatchEvent(new Event('submit'));
         }
     });
+
+    // إخفاء شاشة التحميل إذا كانت ظاهرة
+    hideLoading();
 });
