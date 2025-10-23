@@ -3,84 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موقع موب العالمي - الصفحة الرئيسية</title>
+    <title>موقع موب العالمي للدردشة - © 2025</title>
+    <meta name="description" content="منصة دردشة عالمية آمنة ومتطورة">
+    <meta name="author" content="المطور والمالك الوحيد طبعا: [MOBO]">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- خلفية حمراء -->
-    <div class="red-bg" id="red-bg"></div>
+    <!-- 🌟 الخلفيات المتحركة -->
+    <div class="stars-bg" id="stars-bg"></div>
     <div class="moving-lights">
-        <div class="light red-light"></div>
-        <div class="light red-light"></div>
-        <div class="light red-light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
     </div>
 
-    <div class="welcome-container">
-        <div class="logo-container">
-            <div class="logo-glow red-glow"></div>
-            <img src="https://i.top4top.io/p_3583q2vy21.jpg" alt="شعار موب العالمي" class="logo-image">
-            <div class="logo-text">موقع موب العالمي</div>
-            <p>منصة دردشة عالمية آمنة ومتطورة</p>
-        </div>
+    <!-- شاشة تسجيل الدخول -->
+    <div id="login-screen" class="screen active">
+        <div class="login-container fade-in">
+            <!-- الشعار مع تأثيرات متطورة -->
+            <div class="site-logo">
+                <div class="logo-glow"></div>
+                <img src="https://i.top4top.io/p_3583q2vy21.jpg" 
+                     alt="شعار الدردشة الحمراء" 
+                     class="logo-image">
+                <div class="logo-text">موقع موب العالمي</div>
+                <p>منصة دردشة عالمية آمنة ومتطورة</p>
+            </div>
+            
+            <div class="login-options">
+                <!-- الدخول بالاسم والكود -->
+                <div class="login-option">
+                    <h3>🔐 تسجيل الدخول</h3>
+                    <div class="input-group">
+                        <input type="text" id="login-username" placeholder="اسم المستخدم" maxlength="20">
+                        <input type="text" id="login-code" placeholder="كود الدخول" maxlength="20">
+                    </div>
+                    <button class="modern-btn" onclick="loginWithCredentials()">
+                        <span class="btn-text">دخول إلى الدردشة</span>
+                        <span class="btn-glow"></span>
+                    </button>
+                    <div class="login-info">
+                        <small>أدخل اسم المستخدم وكود الدخول</small>
+                        <small>أو <a href="#" onclick="showRecoveryOption()">استعادة الحساب</a></small>
+                    </div>
+                </div>
+                
+                <div class="or-divider">
+                    <span>أو</span>
+                </div>
+                
+                <!-- إنشاء حساب جديد -->
+                <div class="login-option">
+                    <h3>🎯 إنشاء حساب جديد</h3>
+                    <div class="input-group">
+                        <input type="text" id="new-username" placeholder="اختر اسم مستخدم" maxlength="20">
+                        <input type="password" id="new-password" placeholder="اختر كلمة مرور قوية">
+                    </div>
+                    <button class="modern-btn" onclick="createAccount()">
+                        <span class="btn-text">إنشاء حساب جديد</span>
+                        <span class="btn-glow"></span>
+                    </button>
+                    <div class="login-info">
+                        <small>سيتم إنشاء كود دخول فريد لك</small>
+                        <small>يمكنك إنشاء حساب واحد فقط </small>
+                    </div>
+                    <div id="username-feedback" class="feedback"></div>
+                    <div id="password-feedback" class="feedback"></div>
+                </div>
 
-        <div class="welcome-options">
-            <button class="glow-button red-button" onclick="showLoginPage()">
-                🔐 تسجيل الدخول
-            </button>
-            <button class="glow-button red-button" onclick="showRegisterPage()">
-                🎯 إنشاء حساب جديد
-            </button>
-        </div>
+                <!-- رسالة للمدير -->
+                <div class="contact-admin">
+                    <h3>📩 رسالة للمدير</h3>
+                    <textarea id="admin-message" placeholder="اكتب رسالتك للمدير هنا..." maxlength="500" rows="3"></textarea>
+                    <button class="modern-btn" onclick="sendMessageToAdmin()">
+                        <span class="btn-text">إرسال للمدير</span>
+                        <span class="btn-glow"></span>
+                    </button>
+                    <div class="login-info">
+                        <small>للاستفسارات أو المشاكل التقنية</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- معلومات الحماية -->
+            <div class="security-notice">
+                <h4>🛡️ نصائح أمان:</h4>
+                <ul>
+                    <li>لا تشارك كود الدخول مع أي شخص</li>
+                    <li>اختر كلمة مرور قوية واحتفظ بها</li>
+                    <li>يمكنك استعادة الحساب باسم المستخدم وكلمة المرور فقط</li>
+                    <li>الحسابات غير النشطة تحذف بعد 10 أيام</li>
+                    <li>الرسائل خاصة وآمنة</li>
+                </ul>
+            </div>
 
-        <div class="security-notice glass-card">
-            <h4>🛡️ مميزات المنصة:</h4>
-            <ul>
-                <li>دردشة آمنة ومشفرة</li>
-                <li>غرف مخصصة للدول العربية</li>
-                <li>حماية متقدمة من الهجمات</li>
-                <li>واجهة عربية سلسة</li>
-            </ul>
-        </div>
-
-        <div class="copyright-notice">
-            © 2025 موقع موب العالمي للدردشة - جميع الحقوق محفوظة
+            <!-- حقوق الطبع -->
+            <div class="copyright-notice">
+                © 2025 موقع موب العالمي للدردشة - جميع الحقوق محفوظة
+            </div>
         </div>
     </div>
 
+    <!-- نافذة استعادة الحساب -->
+    <div id="recovery-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeRecoveryModal()">&times;</span>
+            <h2>🔑 استعادة كود الدخول</h2>
+            <div class="modal-text">
+                <div class="input-group">
+                    <input type="text" id="recovery-username" placeholder="اسم المستخدم" maxlength="20">
+                    <input type="password" id="recovery-password" placeholder="كلمة المرور">
+                </div>
+                <button class="modern-btn" onclick="recoverAccount()">
+                    <span class="btn-text">استعادة الكود</span>
+                    <span class="btn-glow"></span>
+                </button>
+                <div id="recovery-result" class="recovery-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة بيانات الحساب -->
+    <div id="account-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAccountModal()">&times;</span>
+            <h2>😈 تم إنشاء حسابك بنجاح!</h2>
+            <div class="modal-text">
+                <div class="account-data">
+                    <div class="data-row">
+                        <span class="data-label">اسم المستخدم:</span>
+                        <span id="account-username" class="data-value"></span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">كود الدخول:</span>
+                        <div class="code-container">
+                            <span id="account-code" class="code-value"></span>
+                            <button class="copy-btn" onclick="copyAccountCode()">📋 نسخ</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="important-notice">
+                    <h4>💡 ملاحظة مهمة:</h4>
+                    <p>احتفظ بكود الدخول في مكان آمن لأنه لا يمكن استعادته إلا باسم المستخدم وكلمة المرور</p>
+                </div>
+                <button class="modern-btn" onclick="closeAccountModalAndLogin()">
+                    <span class="btn-text">متابعة إلى الدردشة</span>
+                    <span class="btn-glow"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شاشة الدردشة الرئيسية -->
+    <div id="chat-screen" class="screen">
+        <!-- نفس كود الشات السابق المتطور -->
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+
+    <!-- حماية حقوق الطبع -->
     <script>
-        function showLoginPage() {
-            window.location.href = 'login.html';
+        // منع النسخ العام لكن السماح بنسخ الأكواد فقط
+        document.addEventListener('contextmenu', function(e) {
+            if (!e.target.classList.contains('code-value') && !e.target.classList.contains('copy-btn')) {
+                e.preventDefault();
+                showProtectionAlert('🚫  يمنع النسخ');
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            const allowedElements = ['login-code', 'new-username', 'new-password', 'admin-message', 'message-input'];
+            const isAllowed = allowedElements.includes(e.target.id) || 
+                            e.target.classList.contains('code-value') ||
+                            e.target.isContentEditable;
+            
+            if (!isAllowed && (
+                (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's')) || 
+                e.key === 'F12' ||
+                (e.ctrlKey && e.shiftKey && e.key === 'I')
+            )) {
+                e.preventDefault();
+                showProtectionAlert('🚫 هذا الإجراء غير مسموح ');
+            }
+        });
+
+        function showProtectionAlert(message) {
+            // كود التنبيه السابق
         }
 
-        function showRegisterPage() {
-            window.location.href = 'register.html';
-        }
-
-        // إنشاء النجوم الحمراء
-        function createRedStars() {
-            const bg = document.getElementById('red-bg');
-            const starCount = 80;
+        // إنشاء النجوم المتحركة
+        function createStars() {
+            const starsBg = document.getElementById('stars-bg');
+            const starCount = 150;
             
             for (let i = 0; i < starCount; i++) {
                 const star = document.createElement('div');
-                star.className = 'star red-star';
+                star.className = 'star';
                 
                 const size = Math.random() * 3 + 1;
                 const left = Math.random() * 100;
                 const top = Math.random() * 100;
                 const delay = Math.random() * 5;
+                const duration = Math.random() * 3 + 2;
                 
                 star.style.width = `${size}px`;
                 star.style.height = `${size}px`;
                 star.style.left = `${left}%`;
                 star.style.top = `${top}%`;
                 star.style.animationDelay = `${delay}s`;
+                star.style.animationDuration = `${duration}s`;
                 
-                bg.appendChild(star);
+                starsBg.appendChild(star);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', createRedStars);
+        document.addEventListener('DOMContentLoaded', createStars);
     </script>
 </body>
 </html>
