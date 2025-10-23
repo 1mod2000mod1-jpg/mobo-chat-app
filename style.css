@@ -1,390 +1,166 @@
-/* 🌟 إضافات جمالية متطورة */
+/* الألوان الأساسية الحمراء */
+:root {
+    --primary-red: #dc2626;
+    --dark-red: #b91c1c;
+    --light-red: #fecaca;
+    --red-glow: rgba(220, 38, 38, 0.3);
+}
 
-/* خلفية نجوم متحركة */
-.stars-bg {
+/* الخلفية الحمراء */
+.red-bg {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #5b21b6 100%);
+    background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 50%, #7f1d1d 100%);
     z-index: -2;
 }
 
-.star {
-    position: absolute;
-    background: white;
-    border-radius: 50%;
-    animation: twinkle 3s infinite;
+.red-star {
+    background: #fecaca;
+    animation: redTwinkle 3s infinite;
 }
 
-@keyframes twinkle {
+@keyframes redTwinkle {
     0%, 100% { opacity: 0.3; transform: scale(1); }
     50% { opacity: 1; transform: scale(1.2); }
 }
 
-/* أضواء متحركة في الخلفية */
-.moving-lights {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    overflow: hidden;
+.red-light {
+    background: radial-gradient(circle, var(--red-glow) 0%, transparent 70%);
 }
 
-.light {
+.red-button {
+    background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+}
+
+.red-button:hover {
+    box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4);
+}
+
+.red-glow {
+    background: radial-gradient(circle, var(--red-glow) 0%, transparent 70%);
+}
+
+/* تحسينات للصفحات المنفصلة */
+.welcome-container, .auth-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.welcome-options {
+    display: flex;
+    gap: 1rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.back-button {
     position: absolute;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
-    filter: blur(40px);
-    animation: float 15s infinite linear;
+    top: 2rem;
+    right: 2rem;
 }
 
-.light:nth-child(1) {
-    top: 10%;
-    left: 20%;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%);
-    animation-duration: 20s;
+.auth-form {
+    width: 100%;
+    max-width: 400px;
+    margin: 2rem 0;
 }
 
-.light:nth-child(2) {
-    top: 60%;
-    left: 70%;
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
-    animation-duration: 25s;
+.form-group {
+    margin-bottom: 1.5rem;
 }
 
-.light:nth-child(3) {
-    top: 30%;
-    left: 50%;
-    background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, transparent 70%);
-    animation-duration: 18s;
+.auth-links {
+    margin-top: 1.5rem;
+    text-align: center;
 }
 
-@keyframes float {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    25% { transform: translate(100px, 50px) rotate(90deg); }
-    50% { transform: translate(50px, 100px) rotate(180deg); }
-    75% { transform: translate(-50px, 50px) rotate(270deg); }
-    100% { transform: translate(0, 0) rotate(360deg); }
+.auth-links a {
+    color: var(--light-red);
+    text-decoration: none;
 }
 
-/* تأثيرات دخول متطورة */
-.glow-in {
-    animation: glowIn 1.5s ease-out;
+.auth-links a:hover {
+    text-decoration: underline;
 }
 
-@keyframes glowIn {
-    0% {
-        opacity: 0;
-        transform: translateY(30px) scale(0.9);
-        filter: blur(10px);
-    }
-    50% {
-        opacity: 0.5;
-        transform: translateY(-10px) scale(1.02);
-        filter: blur(5px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0);
-    }
-}
-
-/* كارت بتأثير زجاجي */
-.glass-card {
+/* نافذة بيانات الحساب */
+.account-data {
     background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin: 1rem 0;
 }
 
-/* أزرار متوهجة */
-.glow-button {
-    background: linear-gradient(135deg, #3b82f6, #6366f1);
-    border: none;
-    border-radius: 12px;
-    color: white;
-    padding: 1rem 2rem;
+.data-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.code-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.login-code {
+    font-family: monospace;
     font-size: 1.1rem;
-    font-weight: 600;
+    font-weight: bold;
+    color: var(--light-red);
+}
+
+.copy-btn {
+    background: var(--primary-red);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+    transition: all 0.3s;
 }
 
-.glow-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-}
-
-.glow-button:hover::before {
-    left: 100%;
-}
-
-.glow-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 
-        0 10px 25px rgba(59, 130, 246, 0.4),
-        0 0 30px rgba(59, 130, 246, 0.2);
-}
-
-/* حقول إدخال متطورة */
-.glow-input {
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 1rem 1.5rem;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-.glow-input:focus {
-    border-color: #3b82f6;
-    box-shadow: 
-        0 0 0 3px rgba(59, 130, 246, 0.1),
-        0 8px 25px rgba(59, 130, 246, 0.15);
+.copy-btn:hover {
+    background: var(--dark-red);
     transform: translateY(-2px);
 }
 
-/* شعار متحرك */
-.logo-container {
-    position: relative;
-    text-align: center;
-    margin-bottom: 3rem;
+.important-notice {
+    background: rgba(220, 38, 38, 0.1);
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    border-right: 3px solid var(--primary-red);
 }
 
-.logo-glow {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 140px;
-    height: 140px;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
-    border-radius: 50%;
-    filter: blur(20px);
-    animation: pulseGlow 3s ease-in-out infinite;
-}
-
-@keyframes pulseGlow {
-    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-    50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
-}
-
-/* رسائل متطورة */
-.floating-message {
-    animation: floatMessage 0.6s ease-out;
-}
-
-@keyframes floatMessage {
-    0% {
-        opacity: 0;
-        transform: translateX(50px) scale(0.8);
-    }
-    70% {
-        transform: translateX(-10px) scale(1.05);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0) scale(1);
-    }
-}
-
-/* شريط تقدم متحرك */
-.progress-bar {
-    height: 4px;
-    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #3b82f6);
-    background-size: 200% 100%;
-    animation: progressMove 2s linear infinite;
-    border-radius: 2px;
-}
-
-@keyframes progressMove {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-
-/* تأثيرات للمستخدمين المتصلين */
-.online-user {
-    position: relative;
-}
-
-.online-user::after {
-    content: '';
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 8px;
-    height: 8px;
-    background: #10b981;
-    border-radius: 50%;
-    animation: pulseOnline 2s infinite;
-}
-
-@keyframes pulseOnline {
-    0%, 100% { 
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); 
-    }
-    50% { 
-        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); 
-    }
-}
-
-/* تأثيرات للغرف النشطة */
-.active-room-glow {
-    position: relative;
-    overflow: hidden;
-}
-
-.active-room-glow::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
-    animation: roomGlow 3s infinite;
-}
-
-@keyframes roomGlow {
-    0% { left: -100%; }
-    50% { left: 100%; }
-    100% { left: 100%; }
-}
-
-/* تحسينات للهيدر */
-.chat-header {
-    background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
-    position: relative;
-    overflow: hidden;
-}
-
-.chat-header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #60a5fa, transparent);
-    animation: headerGlow 3s infinite;
-}
-
-@keyframes headerGlow {
-    0% { transform: translateX(-100%); }
-    50% { transform: translateX(100%); }
-    100% { transform: translateX(100%); }
-}
-
-/* تحسينات للرسائل */
-.message {
-    transition: all 0.3s ease;
-}
-
-.message:hover {
-    transform: translateX(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-/* شريط التمرير المخصص */
-.custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #2563eb, #7c3aed);
-}
-
-/* تأثيرات للزر الخاص */
-.premium-badge {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
+/* التنبيهات */
+.alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 2rem;
+    border-radius: 10px;
     color: white;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    animation: badgePulse 2s infinite;
+    font-weight: bold;
+    z-index: 10000;
+    animation: glowIn 0.5s ease-out;
 }
 
-@keyframes badgePulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+.alert-error {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
 }
 
-/* تحسينات للوضع الداكن */
-@media (prefers-color-scheme: dark) {
-    .glass-card {
-        background: rgba(0, 0, 0, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .glow-input {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        border-color: rgba(255, 255, 255, 0.2);
-    }
-    
-    .glow-input:focus {
-        background: rgba(255, 255, 255, 0.15);
-    }
-}
-
-/* تحسينات للشاشات الصغيرة */
-@media (max-width: 768px) {
-    .light {
-        width: 100px;
-        height: 100px;
-        filter: blur(20px);
-    }
-    
-    .logo-glow {
-        width: 100px;
-        height: 100px;
-    }
-}
-
-/* تأثيرات تحميل */
-.loading-dots {
-    display: inline-block;
-}
-
-.loading-dots::after {
-    content: '';
-    animation: dots 1.5s steps(4, end) infinite;
-}
-
-@keyframes dots {
-    0%, 20% { content: '.'; }
-    40% { content: '..'; }
-    60% { content: '...'; }
-    80%, 100% { content: ''; }
+.alert-success {
+    background: linear-gradient(135deg, #10b981, #34d399);
 }
