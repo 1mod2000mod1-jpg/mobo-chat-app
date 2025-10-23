@@ -3,48 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة الدردشة العربية - مجانية</title>
-    <meta name="description" content="منصة دردشة عربية مجانية مع دعم الإعلانات">
+    <title>منصة الدردشة المتطورة</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="chat-container">
-        <header class="chat-header">
-            <h1>💬 منصة الدردشة</h1>
-            <div class="user-info">
-                <input type="text" id="username" placeholder="ادخل اسمك هنا" maxlength="20">
-                <button id="join-btn">انضم للدردشة</button>
-            </div>
-        </header>
-        
-        <div class="chat-main">
-            <div class="chat-messages" id="messages">
-                <div class="welcome-message">
-                    <h3>مرحباً! 👋</h3>
-                    <p>ادخل اسمك وانضم للدردشة مع الآخرين</p>
-                </div>
+    <!-- شاشة تسجيل الدخول -->
+    <div id="login-screen" class="screen active">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>🔴 منصة الدردشة الحمراء</h1>
+                <p>اختر طريقة الدخول</p>
             </div>
             
-            <div class="chat-form-container">
-                <form id="message-form">
-                    <input type="text" id="message-input" placeholder="اكتب رسالتك هنا..." maxlength="500" disabled>
-                    <button type="submit" disabled>إرسال</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- مساحة الإعلانات -->
-        <div class="ads-container">
-            <div class="ad-placeholder" id="ad-banner">
-                <span>🚫 الإعلانات: مساحة للإعلانات المستقبلية</span>
+            <div class="login-options">
+                <!-- الدخول بكود موجود -->
+                <div class="login-option">
+                    <h3>الدخول بكود</h3>
+                    <input type="text" id="login-code" placeholder="أدخل كود الدخول" maxlength="10">
+                    <button onclick="loginWithCode()">دخول</button>
+                </div>
+                
+                <!-- أو -->
+                <div class="or-divider">
+                    <span>أو</span>
+                </div>
+                
+                <!-- إنشاء حساب جديد -->
+                <div class="login-option">
+                    <h3>إنشاء حساب جديد</h3>
+                    <input type="text" id="new-username" placeholder="اسم المستخدم" maxlength="20">
+                    <input type="password" id="new-password" placeholder="كلمة المرور">
+                    <button onclick="createAccount()">إنشاء حساب</button>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- شاشة الدردشة الرئيسية -->
+    <div id="chat-screen" class="screen">
+        <div class="chat-container">
+            <!-- الهيدر -->
+            <header class="chat-header">
+                <div class="header-left">
+                    <h1>🔴 الدردشة الحمراء</h1>
+                    <div class="user-status">
+                        <span id="current-user"></span>
+                        <span id="user-badges"></span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button id="users-list-btn" onclick="toggleUsersList()">👥 المستخدمين</button>
+                    <button id="logout-btn" onclick="logout()">خروج</button>
+                </div>
+            </header>
+            
+            <!-- المنطقة الرئيسية -->
+            <div class="chat-main">
+                <!-- قائمة المستخدمين -->
+                <div id="users-sidebar" class="users-sidebar">
+                    <h3>المستخدمين المتصلين</h3>
+                    <div id="users-list"></div>
+                </div>
+                
+                <!-- منطقة الرسائل -->
+                <div class="chat-content">
+                    <div class="chat-messages" id="messages">
+                        <div class="welcome-message">
+                            <h3>مرحباً! 👋</h3>
+                            <p>ابدأ الدردشة مع الأصدقاء</p>
+                        </div>
+                    </div>
+                    
+                    <!-- أدوات الإرسال -->
+                    <div class="chat-tools">
+                        <div class="message-options">
+                            <button id="image-btn" onclick="document.getElementById('image-input').click()">🖼️ صورة</button>
+                            <button id="private-btn" onclick="togglePrivateMode()">🔒 خاص</button>
+                            <select id="user-select" style="display: none;">
+                                <option value="">اختر مستخدم</option>
+                            </select>
+                        </div>
+                        
+                        <form id="message-form" class="message-form">
+                            <input type="text" id="message-input" placeholder="اكتب رسالتك..." maxlength="500">
+                            <button type="submit">إرسال 🚀</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- مساحة الإعلانات -->
+            <div class="ads-container">
+                <div class="ad-placeholder" id="ad-banner">
+                    <span>🚫 مساحة إعلانية</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input hidden لرفع الصور -->
+    <input type="file" id="image-input" accept="image/*" style="display: none;">
+    
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
-    <!-- مساحة لإعلانات AdSense المستقبلية -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXX"
-     crossorigin="anonymous"></script>
 </body>
 </html>
