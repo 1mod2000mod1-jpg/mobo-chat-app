@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الدردشة - موقع موب العالمي</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="chat-container">
+        <!-- الهيدر -->
+        <header class="chat-header">
+            <div class="header-left">
+                <div class="header-logo">
+                    <img src="https://i.top4top.io/p_3583q2vy21.jpg" alt="الشعار" class="header-logo-image">
+                    <div>
+                        <h1>موقع موب العالمي</h1>
+                        <div class="room-info" id="room-info">🌍 الغرفة العالمية الرئيسية</div>
+                    </div>
+                </div>
+                <div class="user-status">
+                    <span id="current-user"></span>
+                    <span id="user-badges"></span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="glow-button red-button" id="rooms-btn" onclick="toggleRoomsList()">🌍 الغرف</button>
+                <button class="glow-button red-button" id="users-list-btn" onclick="toggleUsersList()">👥 المستخدمين</button>
+                <button class="glow-button red-button premium-badge" id="admin-panel-btn" style="display: none;" onclick="showAdminPanel()">👑 الأدمن</button>
+                <button class="glow-button red-button" id="logout-btn" onclick="logout()">خروج</button>
+            </div>
+        </header>
+        
+        <!-- المنطقة الرئيسية -->
+        <div class="chat-main">
+            <!-- قائمة الغرف -->
+            <div id="rooms-sidebar" class="rooms-sidebar custom-scrollbar">
+                <div class="sidebar-header">
+                    <h3>🌍 غرف الدردشة</h3>
+                    <button class="glow-button red-button" id="create-room-btn" style="display: none;" onclick="showCreateRoomForm()">+ غرفة جديدة</button>
+                </div>
+                <div id="rooms-list"></div>
+            </div>
+
+            <!-- قائمة المستخدمين -->
+            <div id="users-sidebar" class="users-sidebar custom-scrollbar">
+                <h3>👥 المستخدمين المتصلين</h3>
+                <div id="users-list"></div>
+            </div>
+            
+            <!-- منطقة الرسائل -->
+            <div class="chat-content">
+                <div class="chat-messages custom-scrollbar" id="messages">
+                    <div class="welcome-message glass-card">
+                        <img src="https://i.top4top.io/p_3583q2vy21.jpg" alt="مرحباً" class="welcome-logo">
+                        <h3>مرحباً بك في موقع موب العالمي! 👋</h3>
+                        <p>اختر غرفة دردشة من القائمة لبدء المحادثة</p>
+                    </div>
+                </div>
+                
+                <!-- أدوات الإرسال -->
+                <div class="chat-tools">
+                    <div class="message-options">
+                        <button class="glow-button red-button" id="private-btn" onclick="togglePrivateMode()">🔒 خاص</button>
+                        <select id="user-select" class="glow-input" style="display: none;">
+                            <option value="">اختر مستخدم</option>
+                        </select>
+                    </div>
+                    
+                    <form id="message-form" class="message-form">
+                        <input type="text" id="message-input" class="glow-input" placeholder="اكتب رسالتك هنا..." maxlength="500" disabled>
+                        <button type="submit" class="glow-button red-button" disabled>إرسال 🚀</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- النوافذ المنبثقة -->
+    <div id="create-room-modal" class="modal">
+        <div class="modal-content glass-card">
+            <span class="close" onclick="closeCreateRoomModal()">&times;</span>
+            <h2>🌍 إنشاء غرفة جديدة</h2>
+            <div class="modal-text">
+                <form id="create-room-form">
+                    <input type="text" id="room-name" class="glow-input" placeholder="اسم الغرفة" maxlength="30" required>
+                    <select id="room-country" class="glow-input" required>
+                        <option value="">اختر الدولة</option>
+                        <option value="palestine">🇵🇸 فلسطين</option>
+                        <option value="saudi">🇸🇦 السعودية</option>
+                        <!-- باقي الدول -->
+                    </select>
+                    <textarea id="room-description" class="glow-input" placeholder="وصف الغرفة" maxlength="200" rows="3"></textarea>
+                    <button type="submit" class="glow-button red-button">إنشاء الغرفة</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="chat.js"></script>
+</body>
+</html>
