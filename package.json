@@ -1,10 +1,11 @@
 {
   "name": "mob-global-chat",
   "version": "4.0.0",
-  "description": "موقع موب العالمي للدردشة - منصة دردشة عالمية آمنة",
+  "description": "موقع موب العالمي للدردشة - منصة دردشة عالمية آمنة ومتطورة",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "dev": "node server.js",
     "build": "npm install"
   },
   "dependencies": {
@@ -21,7 +22,10 @@
     "arabic",
     "secure",
     "global",
-    "rooms"
+    "rooms",
+    "دردشة",
+    "عربية",
+    "آمنة"
   ],
   "author": "[MOBO]",
   "license": "Copyright © 2025 - جميع الحقوق محفوظة"
