@@ -19,12 +19,12 @@ const PORT = process.env.PORT || 3000;
 
 // 🔒 حماية حقوق الطبع والنشر
 console.log(`
-╔══════════════════════════════════════════════════╗
-║              🚀 موقع موب العالمي               ║
-║           © 2025 جميع الحقوق محفوظة             ║
-║        تم الانشاء و التطوير بواسطة السيد: [MOBO]       ║
-║     يمنع النسخ أو التوزيع غير المصرح به         ║
-╚══════════════════════════════════════════════════╝
+╔═════════════════════════════════════════════════╗
+║              🚀 موقع موب العالمي                    ║
+║            © 2025 جميع الحقوق محفوظة                ║
+║           تم الانشاء و التطوير بواسطة: [MOBO]           ║
+║             يمنع النسخ أو التوزيع                      ║
+╚═════════════════════════════════════════════════╝
 `);
 
 app.use(express.static(path.join(__dirname)));
@@ -52,7 +52,7 @@ const loginAttempts = new Map();
 const accountCreationLimits = new Map();
 const messageRates = new Map();
 
-// 🏴 الدول العربية
+// 🏴 جميع الدول العربية
 const arabCountries = {
   'palestine': { name: 'فلسطين', flag: '🇵🇸', code: 'ps' },
   'saudi': { name: 'السعودية', flag: '🇸🇦', code: 'sa' },
@@ -130,7 +130,7 @@ const createDefaultRooms = () => {
       id: 'main_global',
       name: '🌍 الغرفة العالمية الرئيسية',
       country: 'global',
-      description: 'مكان للتواصل بين جميع الدول العربية',
+      description: 'مكان للتواصل بين جميع الدول العالمية',
       createdBy: 'system',
       createdAt: new Date(),
       users: new Set(),
@@ -164,6 +164,17 @@ const createDefaultRooms = () => {
       name: '🌅 غرفة دول الخليج',
       country: 'uae',
       description: 'لتجمع شعوب دول الخليج العربي',
+      createdBy: 'system',
+      createdAt: new Date(),
+      users: new Set(),
+      messages: [],
+      isActive: true
+    },
+    {
+      id: 'egypt_nile',
+      name: '🇪🇬 غرفة مصر أم الدنيا',
+      country: 'egypt',
+      description: 'لأبناء مصر ',
       createdBy: 'system',
       createdAt: new Date(),
       users: new Set(),
@@ -243,6 +254,31 @@ const securitySystem = {
     return sessionId;
   }
 };
+
+// 🧹 نظام التنظيف التلقائي
+setInterval(() => {
+  const now = Date.now();
+  let cleaned = 0;
+  
+  // تنظيف الجلسات المنتهية
+  for (const [sessionId, session] of userSessions.entries()) {
+    if (now - session.lastActivity > securityConfig.SESSION_TIMEOUT) {
+      userSessions.delete(sessionId);
+      cleaned++;
+    }
+  }
+  
+  // تنظيف معدلات الرسائل
+  for (const [userId, rate] of messageRates.entries()) {
+    if (now - rate.startTime > 60000) {
+      messageRates.delete(userId);
+    }
+  }
+  
+  if (cleaned > 0) {
+    console.log(`🧹 تم تنظيف ${cleaned} جلسة منتهية`);
+  }
+}, 60 * 60 * 1000);
 
 // 🌐 نظام تسجيل الدخول المطور
 io.on('connection', (socket) => {
@@ -327,18 +363,27 @@ io.on('connection', (socket) => {
       
       const attemptsLeft = securityConfig.MAX_LOGIN_ATTEMPTS - loginAttempts.get(clientIP).count;
       socket.emit('login-failed', `بيانات الدخول غير صحيحة. لديك ${attemptsLeft} محاولات متبقية`);
+      
+      console.log(`❌ محاولة دخول فاشلة من ${clientIP}`);
     }
   });
 
   // 📝 إنشاء حساب جديد
   socket.on('create-account', (data) => {
     if (!securitySystem.checkIPLimit(clientIP)) {
-      socket.emit('account-error', 'لا يمكن إنشاء أكثر من حساب واحد أسبوعياً من نفس الجهاز');
+      socket.emit('account-error', 'لا يمكن إنشاء أكثر من حساب واحد من نفس الجهاز');
       return;
     }
     
     const username = data.username.trim();
     const password = data.password;
+    
+    // التحقق من الأسماء المحجوزة
+    const reservedNames = ['admin', 'administrator', 'moderator', 'مدير', 'مشرف', 'system', 'نظام', 'مدير_موب_العالمي'];
+    if (reservedNames.includes(username.toLowerCase())) {
+      socket.emit('account-error', 'اسم المستخدم محجوز ولا يمكن استخدامه');
+      return;
+    }
     
     // التحقق من صحة الاسم
     if (username.length < 3 || username.length > 20) {
@@ -397,16 +442,262 @@ io.on('connection', (socket) => {
       message: `🎉 تم إنشاء حسابك بنجاح!\n\n🔑 كود الدخول الخاص بك: ${userCode}\n\n💡 احتفظ بهذا الكود في مكان آمن لأنه لا يمكن استعادته`,
       accountsRemaining: 0
     });
+    
+    console.log(`🎯 حساب جديد: ${username} من ${clientIP}`);
   });
 
-  // باقي الأحداث تبقى كما هي...
-  // [نفس الكود السابق للأحداث الأخرى]
+  // 🔑 استعادة الحساب
+  socket.on('recover-account', (data) => {
+    const { username, password } = data;
+    let userFound = null;
+    let userCode = null;
+
+    // البحث عن المستخدم بالاسم وكلمة المرور
+    for (const [userId, user] of users.entries()) {
+      if (user.username === username && bcrypt.compareSync(password, user.password)) {
+        userFound = user;
+        userCode = userCodes.get(userId);
+        break;
+      }
+    }
+
+    if (userFound && userCode) {
+      socket.emit('account-recovered', {
+        username: userFound.username,
+        loginCode: userCode,
+        message: 'تم استعادة كود الدخول بنجاح'
+      });
+      console.log(`🔑 استعادة حساب: ${username} من ${clientIP}`);
+    } else {
+      socket.emit('recovery-failed', 'اسم المستخدم أو كلمة المرور غير صحيحة');
+    }
+  });
+
+  // 📩 رسالة للمدير
+  socket.on('send-admin-message', (data) => {
+    const message = {
+      id: uuidv4(),
+      from: data.from || 'مجهول',
+      message: data.message,
+      ip: clientIP,
+      timestamp: new Date(),
+      read: false
+    };
+    
+    adminMessages.push(message);
+    
+    // إرسال تنبيه للمدير إذا كان متصل
+    socket.broadcast.emit('new-admin-message', message);
+    
+    socket.emit('admin-message-sent', 'تم إرسال رسالتك للمدير بنجاح');
+    console.log(`📩 رسالة للمدير من ${clientIP}: ${data.message.substring(0, 50)}...`);
+  });
+
+  // 🌍 إنشاء غرفة جديدة
+  socket.on('create-room', (data) => {
+    const user = users.get(socket.userId);
+    if (!user || !user.isAdmin) {
+      socket.emit('error', 'ليس لديك صلاحية إنشاء غرف');
+      return;
+    }
+    
+    const roomId = uuidv4();
+    const room = {
+      id: roomId,
+      name: data.name,
+      country: data.country,
+      description: data.description,
+      createdBy: user.username,
+      createdAt: new Date(),
+      users: new Set(),
+      messages: []
+    };
+    
+    rooms.set(roomId, room);
+    
+    io.emit('room-created', room);
+    socket.emit('room-created-success', 'تم إنشاء الغرفة بنجاح');
+    
+    console.log(`🌍 غرفة جديدة: ${data.name} للدولة: ${data.country}`);
+  });
+
+  // 🚪 الانضمام لغرفة
+  socket.on('join-room', (data) => {
+    const user = users.get(socket.userId);
+    if (!user) return;
+    
+    const room = rooms.get(data.roomId);
+    if (!room) {
+      socket.emit('error', 'الغرفة غير موجودة');
+      return;
+    }
+    
+    // مغادرة الغرفة السابقة
+    if (socket.currentRoom) {
+      const previousRoom = rooms.get(socket.currentRoom);
+      if (previousRoom) {
+        previousRoom.users.delete(socket.userId);
+        socket.leave(socket.currentRoom);
+        socket.to(socket.currentRoom).emit('user-left-room', {
+          username: user.username,
+          roomId: socket.currentRoom
+        });
+      }
+    }
+    
+    // الانضمام للغرفة الجديدة
+    room.users.add(socket.userId);
+    socket.join(data.roomId);
+    socket.currentRoom = data.roomId;
+    
+    socket.emit('room-joined', {
+      roomId: room.id,
+      roomName: room.name,
+      messages: room.messages.slice(-100),
+      userCount: room.users.size
+    });
+    
+    // إعلام الآخرين
+    socket.to(data.roomId).emit('user-joined-room', {
+      username: user.username,
+      roomId: data.roomId
+    });
+    
+    console.log(`🚪 ${user.username} انضم إلى ${room.name}`);
+  });
+
+  // 💬 إرسال رسالة
+  socket.on('send-message', (data) => {
+    const user = users.get(socket.userId);
+    if (!user || !socket.currentRoom) return;
+    
+    // التحقق من سرعة الرسائل
+    if (!securitySystem.checkMessageRate(socket.userId)) {
+      socket.emit('error', 'إرسال سريع جداً. انتظر قليلاً');
+      return;
+    }
+    
+    const room = rooms.get(socket.currentRoom);
+    if (!room) return;
+    
+    const message = {
+      id: uuidv4(),
+      user: user.username,
+      userId: socket.userId,
+      text: data.text.trim(),
+      timestamp: new Date().toLocaleTimeString('ar-EG'),
+      isAdmin: user.isAdmin,
+      isVerified: verifiedUsers.has(socket.userId),
+      roomId: socket.currentRoom
+    };
+    
+    room.messages.push(message);
+    if (room.messages.length > 1000) {
+      room.messages = room.messages.slice(-500);
+    }
+    
+    io.to(socket.currentRoom).emit('new-message', message);
+  });
+
+  // 📊 إحصائيات النظام
+  socket.on('get-stats', () => {
+    const user = users.get(socket.userId);
+    if (!user || !user.isAdmin) return;
+    
+    const stats = {
+      totalUsers: users.size,
+      activeUsers: Array.from(users.values()).filter(u => 
+        Date.now() - u.lastActive < 24 * 60 * 60 * 1000
+      ).length,
+      totalRooms: rooms.size,
+      adminMessages: adminMessages.length,
+      unreadAdminMessages: adminMessages.filter(m => !m.read).length,
+      blockedIPs: Array.from(loginAttempts.entries()).filter(([ip, attempts]) => 
+        attempts.count >= securityConfig.MAX_LOGIN_ATTEMPTS
+      ).length,
+      onlineUsers: Array.from(userSessions.values()).length
+    };
+    
+    socket.emit('stats-data', stats);
+  });
+
+  // 📩 رسائل المدير
+  socket.on('get-admin-messages', () => {
+    const user = users.get(socket.userId);
+    if (!user || !user.isAdmin) return;
+    
+    socket.emit('admin-messages-data', adminMessages.reverse().slice(0, 50));
+  });
+
+  socket.on('mark-message-read', (data) => {
+    const user = users.get(socket.userId);
+    if (!user || !user.isAdmin) return;
+    
+    const message = adminMessages.find(m => m.id === data.messageId);
+    if (message) {
+      message.read = true;
+      socket.emit('message-marked-read', 'تم تحديد الرسالة كمقروءة');
+    }
+  });
+
+  // 📋 الحصول على الغرف
+  socket.on('get-rooms', () => {
+    const roomList = Array.from(rooms.values()).map(room => ({
+      ...room,
+      userCount: room.users.size,
+      countryInfo: arabCountries[room.country] || arabCountries.global
+    }));
+    
+    socket.emit('rooms-list', roomList);
+  });
+
+  // 📋 الحصول على المستخدمين
+  socket.on('get-users', (data) => {
+    const user = users.get(socket.userId);
+    if (!user) return;
+    
+    const room = rooms.get(data.roomId || socket.currentRoom);
+    if (!room) return;
+    
+    const userList = Array.from(room.users).map(userId => {
+      const user = users.get(userId);
+      return user ? {
+        id: user.id,
+        username: user.username,
+        isOnline: true,
+        isVerified: verifiedUsers.has(user.id),
+        isAdmin: user.isAdmin
+      } : null;
+    }).filter(Boolean);
+    
+    socket.emit('users-list', userList);
+  });
+
+  socket.on('disconnect', () => {
+    if (socket.currentRoom && socket.userId) {
+      const room = rooms.get(socket.currentRoom);
+      if (room) {
+        room.users.delete(socket.userId);
+        socket.to(socket.currentRoom).emit('user-left-room', {
+          username: users.get(socket.userId)?.username,
+          roomId: socket.currentRoom
+        });
+      }
+    }
+    
+    if (socket.sessionId) {
+      userSessions.delete(socket.sessionId);
+    }
+    
+    console.log(`🔌 انقطع اتصال: ${socket.userId}`);
+  });
 });
 
 // 🚀 تشغيل الخادم
 server.listen(PORT, () => {
   console.log(`✅ الخادم يعمل على البورت: ${PORT}`);
   console.log(`🔗 الرابط: http://localhost:${PORT}`);
-  console.log('🎨 تم تحميل الجماليات المتطورة بنجاح');
+  console.log('🌍 تم إنشاء غرف للدول العربية بنجاح');
   console.log('🔐 نظام الحماية يعمل بكفاءة');
+  console.log('🎨 الجماليات والواجهة جاهزة');
 });
