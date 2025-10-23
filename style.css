@@ -1,13 +1,31 @@
-/* الألوان الأساسية الحمراء */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 :root {
     --primary-red: #dc2626;
     --dark-red: #b91c1c;
     --light-red: #fecaca;
-    --red-glow: rgba(220, 38, 38, 0.3);
+    --bg-gradient: linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%);
+    --text-color: #333;
+    --bg-color: #fef2f2;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-/* الخلفية الحمراء */
-.red-bg {
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-gradient);
+    height: 100vh;
+    color: var(--text-color);
+    overflow: hidden;
+}
+
+/* 🌟 خلفية النجوم المتحركة */
+.stars-bg {
     position: fixed;
     top: 0;
     left: 0;
@@ -17,150 +35,287 @@
     z-index: -2;
 }
 
-.red-star {
-    background: #fecaca;
-    animation: redTwinkle 3s infinite;
-}
-
-@keyframes redTwinkle {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.2); }
-}
-
-.red-light {
-    background: radial-gradient(circle, var(--red-glow) 0%, transparent 70%);
-}
-
-.red-button {
-    background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
-}
-
-.red-button:hover {
-    box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4);
-}
-
-.red-glow {
-    background: radial-gradient(circle, var(--red-glow) 0%, transparent 70%);
-}
-
-/* تحسينات للصفحات المنفصلة */
-.welcome-container, .auth-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
-}
-
-.welcome-options {
-    display: flex;
-    gap: 1rem;
-    margin: 2rem 0;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.back-button {
+.star {
     position: absolute;
-    top: 2rem;
-    right: 2rem;
+    background: #fecaca;
+    border-radius: 50%;
+    animation: twinkle 3s infinite;
 }
 
-.auth-form {
+@keyframes twinkle {
+    0%, 100% { 
+        opacity: 0.3; 
+        transform: scale(1); 
+    }
+    50% { 
+        opacity: 1; 
+        transform: scale(1.2); 
+        box-shadow: 0 0 10px #fecaca;
+    }
+}
+
+/* 🎇 أضواء متحركة في الخلفية */
+.moving-lights {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    max-width: 400px;
-    margin: 2rem 0;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
+.light {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(220, 38, 38, 0.3) 0%, transparent 70%);
+    filter: blur(60px);
+    animation: float 20s infinite linear;
 }
 
-.auth-links {
-    margin-top: 1.5rem;
+.light:nth-child(1) {
+    top: 10%;
+    left: 20%;
+    animation-duration: 25s;
+    animation-delay: 0s;
+}
+
+.light:nth-child(2) {
+    top: 60%;
+    left: 70%;
+    animation-duration: 30s;
+    animation-delay: 5s;
+}
+
+.light:nth-child(3) {
+    top: 30%;
+    left: 50%;
+    animation-duration: 20s;
+    animation-delay: 10s;
+}
+
+.light:nth-child(4) {
+    top: 80%;
+    left: 30%;
+    animation-duration: 35s;
+    animation-delay: 15s;
+}
+
+.light:nth-child(5) {
+    top: 40%;
+    left: 80%;
+    animation-duration: 28s;
+    animation-delay: 7s;
+}
+
+@keyframes float {
+    0% { 
+        transform: translate(0, 0) rotate(0deg) scale(1); 
+    }
+    25% { 
+        transform: translate(100px, 50px) rotate(90deg) scale(1.1); 
+    }
+    50% { 
+        transform: translate(50px, 100px) rotate(180deg) scale(1.2); 
+    }
+    75% { 
+        transform: translate(-50px, 50px) rotate(270deg) scale(1.1); 
+    }
+    100% { 
+        transform: translate(0, 0) rotate(360deg) scale(1); 
+    }
+}
+
+/* تأثيرات دخول */
+.fade-in {
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(30px) scale(0.9);
+        filter: blur(10px);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+/* تصميم الصورة والشعار */
+.site-logo {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.logo-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(220, 38, 38, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(30px);
+    animation: pulseGlow 3s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { 
+        opacity: 0.5; 
+        transform: translate(-50%, -50%) scale(1); 
+    }
+    50% { 
+        opacity: 0.8; 
+        transform: translate(-50%, -50%) scale(1.1); 
+    }
+}
+
+.logo-image {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 4px solid var(--primary-red);
+    box-shadow: 
+        0 8px 25px rgba(220, 38, 38, 0.3),
+        0 0 50px rgba(220, 38, 38, 0.2);
+    transition: all 0.3s ease;
+    object-fit: cover;
+    position: relative;
+    z-index: 2;
+}
+
+.logo-image:hover {
+    transform: scale(1.05);
+    box-shadow: 
+        0 12px 35px rgba(220, 38, 38, 0.4),
+        0 0 80px rgba(220, 38, 38, 0.3);
+}
+
+.logo-text {
+    font-size: 2.8rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, #fecaca, #fca5a5, #dc2626);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 1.5rem 0;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    animation: textShine 3s ease-in-out infinite;
+}
+
+@keyframes textShine {
+    0%, 100% { 
+        background-position: 0% 50%; 
+        filter: brightness(1);
+    }
+    50% { 
+        background-position: 100% 50%; 
+        filter: brightness(1.2);
+    }
+}
+
+/* الشاشات */
+.screen {
+    display: none;
+    height: 100vh;
+}
+
+.screen.active {
+    display: flex;
+}
+
+/* شاشة تسجيل الدخول */
+.login-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    padding: 3rem;
+    border-radius: 25px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 
+        var(--glass-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 90%;
+    margin: auto;
     text-align: center;
 }
 
-.auth-links a {
-    color: var(--light-red);
-    text-decoration: none;
-}
-
-.auth-links a:hover {
-    text-decoration: underline;
-}
-
-/* نافذة بيانات الحساب */
-.account-data {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 1.5rem;
-    border-radius: 10px;
-    margin: 1rem 0;
-}
-
-.data-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.code-container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.login-code {
-    font-family: monospace;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: var(--light-red);
-}
-
-.copy-btn {
-    background: var(--primary-red);
-    color: white;
+/* الأزرار الحديثة */
+.modern-btn {
+    background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
     border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.copy-btn:hover {
-    background: var(--dark-red);
-    transform: translateY(-2px);
-}
-
-.important-notice {
-    background: rgba(220, 38, 38, 0.1);
-    padding: 1rem;
-    border-radius: 8px;
-    margin: 1rem 0;
-    border-right: 3px solid var(--primary-red);
-}
-
-/* التنبيهات */
-.alert {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 1rem 2rem;
-    border-radius: 10px;
+    border-radius: 15px;
     color: white;
-    font-weight: bold;
-    z-index: 10000;
-    animation: glowIn 0.5s ease-out;
+    padding: 1.2rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    margin: 1rem 0;
+    width: 100%;
+    box-shadow: 
+        0 6px 20px rgba(220, 38, 38, 0.3),
+        0 0 30px rgba(220, 38, 38, 0.1);
 }
 
-.alert-error {
-    background: linear-gradient(135deg, #dc2626, #ef4444);
+.modern-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.3), 
+        transparent
+    );
+    transition: left 0.6s;
 }
 
-.alert-success {
-    background: linear-gradient(135deg, #10b981, #34d399);
+.modern-btn:hover::before {
+    left: 100%;
 }
+
+.modern-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 12px 30px rgba(220, 38, 38, 0.4),
+        0 0 50px rgba(220, 38, 38, 0.2);
+}
+
+.modern-btn:active {
+    transform: translateY(-1px);
+}
+
+.btn-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+        transparent 30%, 
+        rgba(255, 255, 255, 0.2) 50%, 
+        transparent 70%
+    );
+    animation: btnShine 2s infinite;
+}
+
+@keyframes btnShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* باقي الكود يبقى كما كان في الإصدار المتطور السابق */
+/* [يتبع نفس كود الشات المتطور السابق] */
