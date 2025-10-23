@@ -22,6 +22,15 @@ const elements = {
     newPassword: document.getElementById('new-password'),
     adminMessage: document.getElementById('admin-message'),
     
+    // استعادة الحساب
+    recoveryUsername: document.getElementById('recovery-username'),
+    recoveryPassword: document.getElementById('recovery-password'),
+    recoveryResult: document.getElementById('recovery-result'),
+    
+    // بيانات الحساب
+    accountUsername: document.getElementById('account-username'),
+    accountCode: document.getElementById('account-code'),
+    
     // الشات
     currentUser: document.getElementById('current-user'),
     userBadges: document.getElementById('user-badges'),
@@ -32,13 +41,6 @@ const elements = {
     messageInput: document.getElementById('message-input'),
     messageForm: document.getElementById('message-form'),
     userSelect: document.getElementById('user-select'),
-    
-    // الأزرار
-    usersSidebar: document.getElementById('users-sidebar'),
-    roomsSidebar: document.getElementById('rooms-sidebar'),
-    adminPanelBtn: document.getElementById('admin-panel-btn'),
-    adminMessagesBtn: document.getElementById('admin-messages-btn'),
-    createRoomBtn: document.getElementById('create-room-btn'),
     
     // النماذج
     createRoomForm: document.getElementById('create-room-form'),
@@ -77,6 +79,32 @@ window.createAccount = function() {
     }
 };
 
+// 🔑 استعادة الحساب
+window.showRecoveryOption = function() {
+    document.getElementById('recovery-modal').style.display = 'block';
+};
+
+window.closeRecoveryModal = function() {
+    document.getElementById('recovery-modal').style.display = 'none';
+    elements.recoveryUsername.value = '';
+    elements.recoveryPassword.value = '';
+    elements.recoveryResult.textContent = '';
+};
+
+window.recoverAccount = function() {
+    const username = elements.recoveryUsername.value.trim();
+    const password = elements.recoveryPassword.value.trim();
+    
+    if (username && password) {
+        socket.emit('recover-account', { 
+            username: username, 
+            password: password 
+        });
+    } else {
+        showAlert('الرجاء ملء جميع الحقول', 'error');
+    }
+};
+
 // 📩 إرسال رسالة للمدير
 window.sendMessageToAdmin = function() {
     const message = elements.adminMessage.value.trim();
@@ -92,9 +120,36 @@ window.sendMessageToAdmin = function() {
     }
 };
 
+// 📋 نسخ كود الدخول
+window.copyAccountCode = function() {
+    const code = elements.accountCode.textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        showAlert('تم نسخ كود الدخول بنجاح', 'success');
+    }).catch(() => {
+        showAlert('فشل نسخ الكود', 'error');
+    });
+};
+
+// 🎯 نافذة بيانات الحساب
+window.closeAccountModal = function() {
+    document.getElementById('account-modal').style.display = 'none';
+};
+
+window.closeAccountModalAndLogin = function() {
+    document.getElementById('account-modal').style.display = 'none';
+    // مسح حقول التسجيل
+    elements.newUsername.value = '';
+    elements.newPassword.value = '';
+};
+
 // 🌍 إظهار نموذج إنشاء غرفة
 window.showCreateRoomForm = function() {
     document.getElementById('create-room-modal').style.display = 'block';
+};
+
+window.closeCreateRoomModal = function() {
+    document.getElementById('create-room-modal').style.display = 'none';
+    elements.createRoomForm.reset();
 };
 
 // 🌍 إنشاء غرفة جديدة
@@ -128,18 +183,20 @@ function showChatScreen() {
     elements.loginScreen.classList.remove('active');
     elements.chatScreen.style.display = 'flex';
     loadRoomsList();
+    elements.messageInput.disabled = false;
+    elements.messageForm.querySelector('button').disabled = false;
 }
 
 function updateUserBadges(user) {
     let badges = '';
     if (user.isAdmin) {
-        badges += '<span>👑 أدمن</span>';
-        elements.adminPanelBtn.style.display = 'block';
-        elements.adminMessagesBtn.style.display = 'block';
-        elements.createRoomBtn.style.display = 'block';
+        badges += '<span class="badge admin-badge">👑 أدمن</span>';
+        document.getElementById('admin-panel-btn').style.display = 'block';
+        document.getElementById('admin-messages-btn').style.display = 'block';
+        document.getElementById('create-room-btn').style.display = 'block';
     }
     if (user.isVerified) {
-        badges += '<span>✅ موثق</span>';
+        badges += '<span class="badge verified-badge">✅ موثق</span>';
     }
     elements.userBadges.innerHTML = badges;
 }
@@ -147,7 +204,7 @@ function updateUserBadges(user) {
 // 💬 إدارة الرسائل
 function addMessage(message) {
     const messageDiv = document.createElement('div');
-    messageDiv.className = 'message';
+    messageDiv.className = 'message floating-message';
     
     if (message.isAdmin) {
         messageDiv.classList.add('admin-message');
@@ -158,10 +215,10 @@ function addMessage(message) {
     
     let badges = '';
     if (message.isAdmin) {
-        badges += '<span>👑</span>';
+        badges += '<span class="message-badge">👑</span>';
     }
     if (message.isVerified) {
-        badges += '<span>✅</span>';
+        badges += '<span class="message-badge">✅</span>';
     }
     
     messageDiv.innerHTML = `
@@ -179,7 +236,7 @@ function addMessage(message) {
 
 function addSystemMessage(text) {
     const messageDiv = document.createElement('div');
-    messageDiv.className = 'message system-message';
+    messageDiv.className = 'message system-message floating-message';
     messageDiv.innerHTML = `<em>${text}</em>`;
     elements.messagesContainer.appendChild(messageDiv);
     elements.messagesContainer.scrollTop = elements.messagesContainer.scrollHeight;
@@ -200,7 +257,7 @@ function updateRoomsList(rooms) {
     
     rooms.forEach(room => {
         const roomDiv = document.createElement('div');
-        roomDiv.className = `room-item ${room.id === currentRoom ? 'active' : ''}`;
+        roomDiv.className = `room-item ${room.id === currentRoom ? 'active-room-glow' : ''}`;
         
         roomDiv.innerHTML = `
             <div class="room-header">
@@ -232,14 +289,14 @@ function updateUsersList(users) {
     users.forEach(user => {
         if (user.id !== currentUser?.id) {
             const userDiv = document.createElement('div');
-            userDiv.className = 'user-item';
+            userDiv.className = 'user-item online-user';
             
             let badges = '';
             if (user.isAdmin) {
-                badges += '<span>👑</span>';
+                badges += '<span class="user-badge">👑</span>';
             }
             if (user.isVerified) {
-                badges += '<span>✅</span>';
+                badges += '<span class="user-badge">✅</span>';
             }
             
             userDiv.innerHTML = `
@@ -298,7 +355,6 @@ window.showAdminMessages = function() {
 
 window.verifyUser = function(userId) {
     if (currentUser?.isAdmin) {
-        // يمكن إضافة هذه الميزة لاحقاً
         showAlert('ميزة التوثيق قيد التطوير', 'info');
     }
 };
@@ -366,11 +422,6 @@ window.logout = function() {
 // 📋 النماذج المنبثقة
 window.closeModal = function() {
     document.getElementById('copyright-modal').style.display = 'none';
-};
-
-window.closeCreateRoomModal = function() {
-    document.getElementById('create-room-modal').style.display = 'none';
-    elements.createRoomForm.reset();
 };
 
 // 🛡️ حقوق الطبع والنشر
@@ -461,10 +512,10 @@ window.showContactInfo = function() {
 // 🔐 تسجيل الدخول
 socket.on('login-success', (userData) => {
     currentUser = userData;
-    elements.currentUser.textContent = userData.username;
+    elements.currentUser.textContent = userData.displayName || userData.username;
     updateUserBadges(userData);
     showChatScreen();
-    addSystemMessage(`🎉 مرحباً ${userData.username}! تم الدخول بنجاح.`);
+    addSystemMessage(`🎉 مرحباً ${userData.displayName || userData.username}! تم الدخول بنجاح.`);
 });
 
 socket.on('login-failed', (message) => {
@@ -473,20 +524,34 @@ socket.on('login-failed', (message) => {
 
 // 📝 إنشاء الحساب
 socket.on('account-created', (data) => {
-    const message = `تم إنشاء حسابك بنجاح!
-    
-اسم المستخدم: ${data.username}
-كود الدخول: ${data.loginCode}
-
-${data.message}`;
-    
-    showAlert(message, 'success');
-    elements.newUsername.value = '';
-    elements.newPassword.value = '';
+    elements.accountUsername.textContent = data.username;
+    elements.accountCode.textContent = data.loginCode;
+    document.getElementById('account-modal').style.display = 'block';
+    showAlert('تم إنشاء حسابك بنجاح!', 'success');
 });
 
 socket.on('account-error', (message) => {
     showAlert(message, 'error');
+});
+
+// 🔑 استعادة الحساب
+socket.on('account-recovered', (data) => {
+    elements.recoveryResult.innerHTML = `
+        <div class="success-message">
+            <h4>✅ تم استعادة الحساب بنجاح</h4>
+            <p><strong>اسم المستخدم:</strong> ${data.username}</p>
+            <p><strong>كود الدخول:</strong> ${data.loginCode}</p>
+            <button class="modern-btn" onclick="copyRecoveryCode('${data.loginCode}')">📋 نسخ الكود</button>
+        </div>
+    `;
+});
+
+socket.on('recovery-failed', (message) => {
+    elements.recoveryResult.innerHTML = `
+        <div class="error-message">
+            <p>❌ ${message}</p>
+        </div>
+    `;
 });
 
 // 📩 رسائل المدير
@@ -512,14 +577,14 @@ socket.on('admin-messages-data', (messages) => {
         ${messages.length === 0 ? 
             '<p>لا توجد رسائل جديدة</p>' : 
             messages.map(msg => `
-                <div style="background: ${msg.read ? '#f8f9fa' : '#e3f2fd'}; padding: 1rem; margin: 0.5rem 0; border-radius: 8px; border-right: 4px solid ${msg.read ? '#6c757d' : '#007bff'};">
-                    <div style="display: flex; justify-content: space-between;">
+                <div class="admin-message-item ${msg.read ? 'read' : 'unread'}">
+                    <div class="message-header">
                         <strong>${escapeHtml(msg.from)}</strong>
                         <small>${new Date(msg.timestamp).toLocaleString('ar-EG')}</small>
                     </div>
-                    <p style="margin: 0.5rem 0;">${escapeHtml(msg.message)}</p>
+                    <p>${escapeHtml(msg.message)}</p>
                     <small>IP: ${msg.ip}</small>
-                    ${!msg.read ? `<button onclick="markMessageRead('${msg.id}')" style="background: #007bff; color: white; border: none; padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer;">تم القراءة</button>` : ''}
+                    ${!msg.read ? `<button class="modern-btn small-btn" onclick="markMessageAsRead('${msg.id}')">تم القراءة</button>` : ''}
                 </div>
             `).join('')
         }
@@ -544,8 +609,6 @@ socket.on('room-created-success', (message) => {
 socket.on('room-joined', (data) => {
     currentRoom = data.roomId;
     elements.roomInfo.textContent = data.roomName;
-    elements.messageInput.disabled = false;
-    elements.messageForm.querySelector('button').disabled = false;
     
     clearMessages();
     data.messages.forEach(message => addMessage(message));
@@ -592,29 +655,30 @@ socket.on('stats-data', (stats) => {
     text.innerHTML = `
         <p><strong>إحصائيات موقع موب العالمي</strong></p>
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0;">
-            <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; border-right: 4px solid #3b82f6;">
+        <div class="stats-grid">
+            <div class="stat-card">
                 <strong>👥 المستخدمين</strong>
-                <div style="font-size: 1.5rem; color: #3b82f6;">${stats.totalUsers}</div>
+                <div class="stat-value">${stats.totalUsers}</div>
             </div>
-            <div style="background: #f0fdf4; padding: 1rem; border-radius: 8px; border-right: 4px solid #10b981;">
+            <div class="stat-card">
                 <strong>🟢 النشطين</strong>
-                <div style="font-size: 1.5rem; color: #10b981;">${stats.activeUsers}</div>
+                <div class="stat-value">${stats.activeUsers}</div>
             </div>
-            <div style="background: #fef7ed; padding: 1rem; border-radius: 8px; border-right: 4px solid #f59e0b;">
+            <div class="stat-card">
                 <strong>🌍 الغرف</strong>
-                <div style="font-size: 1.5rem; color: #f59e0b;">${stats.totalRooms}</div>
+                <div class="stat-value">${stats.totalRooms}</div>
             </div>
-            <div style="background: #fef2f2; padding: 1rem; border-radius: 8px; border-right: 4px solid #dc2626;">
+            <div class="stat-card">
                 <strong>📩 الرسائل</strong>
-                <div style="font-size: 1.5rem; color: #dc2626;">${stats.adminMessages}</div>
+                <div class="stat-value">${stats.adminMessages}</div>
             </div>
         </div>
         
-        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+        <div class="protection-stats">
             <strong>نظام الحماية:</strong>
             <div>🚫 عناوين IP محظورة: ${stats.blockedIPs}</div>
             <div>📨 رسائل غير مقروءة: ${stats.unreadAdminMessages}</div>
+            <div>🔗 مستخدمين متصلين: ${stats.onlineUsers}</div>
         </div>
     `;
     modal.style.display = 'block';
@@ -626,15 +690,19 @@ socket.on('error', (message) => {
 });
 
 // ⌨️ أحداث لوحة المفاتيح
-elements.loginCode.addEventListener('keypress', function(e) {
+document.getElementById('login-code').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') loginWithCredentials();
 });
 
-elements.newPassword.addEventListener('keypress', function(e) {
+document.getElementById('new-password').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') createAccount();
 });
 
-elements.messageInput.addEventListener('keydown', function(e) {
+document.getElementById('recovery-password').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') recoverAccount();
+});
+
+document.getElementById('message-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         elements.messageForm.dispatchEvent(new Event('submit'));
@@ -658,16 +726,17 @@ function showAlert(message, type = 'info') {
         position: fixed;
         top: 20px;
         right: 20px;
-        background: ${bgColor};
+        background: linear-gradient(135deg, ${bgColor}, ${type === 'error' ? '#ef4444' : type === 'success' ? '#34d399' : '#fbbf24'});
         color: white;
         padding: 1rem 2rem;
         border-radius: 10px;
         z-index: 10000;
         font-weight: bold;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         max-width: 400px;
         word-break: break-word;
         white-space: pre-line;
+        animation: fadeIn 0.5s ease-out;
     `;
     alertDiv.textContent = message;
     document.body.appendChild(alertDiv);
@@ -679,9 +748,15 @@ function showAlert(message, type = 'info') {
     }, 5000);
 }
 
-function markMessageRead(messageId) {
+function copyRecoveryCode(code) {
+    navigator.clipboard.writeText(code).then(() => {
+        showAlert('تم نسخ كود الدخول بنجاح', 'success');
+    });
+}
+
+function markMessageAsRead(messageId) {
     socket.emit('mark-message-read', { messageId: messageId });
-    showAdminMessages(); // إعادة تحميل القائمة
+    showAdminMessages();
 }
 
 // 🎯 تهيئة الصفحة
@@ -697,14 +772,42 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     };
-});
 
-// 📱 إدارة select المستخدمين
-elements.userSelect.addEventListener('change', function() {
-    const selectedUser = usersList.find(user => user.id === this.value);
-    if (selectedUser) {
-        togglePrivateMode(selectedUser.id, selectedUser.username);
-    } else {
-        togglePrivateMode();
-    }
+    // التحقق من صحة البيانات أثناء الكتابة
+    document.getElementById('new-username').addEventListener('input', function() {
+        const username = this.value.trim();
+        const feedback = document.getElementById('username-feedback');
+        
+        if (username.length > 0) {
+            if (username.length < 3) {
+                feedback.textContent = '❌ الاسم قصير جداً';
+                feedback.style.color = '#dc2626';
+            } else if (username.length > 20) {
+                feedback.textContent = '❌ الاسم طويل جداً';
+                feedback.style.color = '#dc2626';
+            } else {
+                feedback.textContent = '✅ اسم مستخدم صالح';
+                feedback.style.color = '#10b981';
+            }
+        } else {
+            feedback.textContent = '';
+        }
+    });
+
+    document.getElementById('new-password').addEventListener('input', function() {
+        const password = this.value;
+        const feedback = document.getElementById('password-feedback');
+        
+        if (password.length > 0) {
+            if (password.length < 4) {
+                feedback.textContent = '❌ كلمة المرور قصيرة';
+                feedback.style.color = '#dc2626';
+            } else {
+                feedback.textContent = '✅ كلمة مرور صالحة';
+                feedback.style.color = '#10b981';
+            }
+        } else {
+            feedback.textContent = '';
+        }
+    });
 });
