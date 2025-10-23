@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب - موقع موب العالمي</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="red-bg"></div>
+    <div class="moving-lights">
+        <div class="light red-light"></div>
+        <div class="light red-light"></div>
+        <div class="light red-light"></div>
+    </div>
+
+    <div class="auth-container">
+        <div class="back-button">
+            <button class="glow-button red-button" onclick="goHome()">🏠 الرئيسية</button>
+        </div>
+
+        <div class="logo-container">
+            <img src="https://i.top4top.io/p_3583q2vy21.jpg" alt="شعار موب العالمي" class="logo-image">
+            <div class="logo-text">إنشاء حساب جديد</div>
+        </div>
+
+        <div class="auth-form glass-card">
+            <h3>🎯 إنشاء حساب جديد</h3>
+            
+            <div class="form-group">
+                <input type="text" id="new-username" class="glow-input" placeholder="اسم المستخدم (3-20 حرف)" maxlength="20">
+                <div id="username-feedback" class="feedback"></div>
+            </div>
+
+            <div class="form-group">
+                <input type="password" id="new-password" class="glow-input" placeholder="كلمة المرور (4 أحرف على الأقل)" maxlength="50">
+                <div id="password-feedback" class="feedback"></div>
+            </div>
+
+            <button class="glow-button red-button" onclick="createAccount()">إنشاء الحساب</button>
+
+            <div class="auth-links">
+                <p>هل لديك حساب بالفعل؟ <a href="login.html">سجل الدخول</a></p>
+            </div>
+        </div>
+
+        <!-- نافذة بيانات الحساب (مخفية في البداية) -->
+        <div id="account-data-modal" class="modal" style="display: none;">
+            <div class="modal-content glass-card">
+                <h2>🎉 تم إنشاء حسابك بنجاح!</h2>
+                <div class="account-data">
+                    <div class="data-item">
+                        <label>اسم المستخدم:</label>
+                        <span id="display-username"></span>
+                    </div>
+                    <div class="data-item">
+                        <label>كود الدخول:</label>
+                        <div class="code-container">
+                            <span id="display-logincode" class="login-code"></span>
+                            <button class="copy-btn" onclick="copyLoginCode()">📋 نسخ</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="important-notice">
+                    <h4>💡 ملاحظة مهمة:</h4>
+                    <p>احتفظ بكود الدخول في مكان آمن لأنه لا يمكن استعادته</p>
+                </div>
+                <button class="glow-button red-button" onclick="goToChat()">الدخول إلى الدردشة</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        function createAccount() {
+            const username = document.getElementById('new-username').value.trim();
+            const password = document.getElementById('new-password').value.trim();
+            
+            if (username && password) {
+                socket.emit('create-account', { 
+                    username: username, 
+                    password: password 
+                });
+            } else {
+                showAlert('الرجاء ملء جميع الحقول', 'error');
+            }
+        }
+
+        function copyLoginCode() {
+            const code = document.getElementById('display-logincode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                showAlert('تم نسخ كود الدخول بنجاح', 'success');
+            });
+        }
+
+        function goToChat() {
+            window.location.href = 'chat.html';
+        }
+
+        // استقبال بيانات الحساب الجديد
+        socket.on('account-created', (data) => {
+            document.getElementById('display-username').textContent = data.username;
+            document.getElementById('display-logincode').textContent = data.loginCode;
+            document.getElementById('account-data-modal').style.display = 'block';
+        });
+
+        socket.on('account-error', (message) => {
+            showAlert(message, 'error');
+        });
+
+        // التحقق من صحة البيانات أثناء الكتابة
+        document.getElementById('new-username').addEventListener('input', function() {
+            const username = this.value.trim();
+            const feedback = document.getElementById('username-feedback');
+            
+            if (username.length > 0) {
+                if (username.length < 3) {
+                    feedback.textContent = '❌ الاسم قصير جداً';
+                    feedback.style.color = '#dc2626';
+                } else if (username.length > 20) {
+                    feedback.textContent = '❌ الاسم طويل جداً';
+                    feedback.style.color = '#dc2626';
+                } else {
+                    feedback.textContent = '✅ اسم مستخدم صالح';
+                    feedback.style.color = '#10b981';
+                }
+            } else {
+                feedback.textContent = '';
+            }
+        });
+
+        document.getElementById('new-password').addEventListener('input', function() {
+            const password = this.value;
+            const feedback = document.getElementById('password-feedback');
+            
+            if (password.length > 0) {
+                if (password.length < 4) {
+                    feedback.textContent = '❌ كلمة المرور قصيرة';
+                    feedback.style.color = '#dc2626';
+                } else {
+                    feedback.textContent = '✅ كلمة مرور صالحة';
+                    feedback.style.color = '#10b981';
+                }
+            } else {
+                feedback.textContent = '';
+            }
+        });
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    document.body.removeChild(alertDiv);
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
