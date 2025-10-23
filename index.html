@@ -22,7 +22,7 @@
     <!-- 🏠 شاشة تسجيل الدخول -->
     <div id="login-screen" class="screen active">
         <div class="login-container fade-in-up">
-            <!-- الشعار المحسن -->
+            <!-- الشعار -->
             <div class="site-logo">
                 <div class="logo-glow"></div>
                 <img src="https://i.top4top.io/p_3583q2vy21.jpg" 
@@ -38,7 +38,7 @@
                     <h3>🔐 تسجيل الدخول</h3>
                     <div class="input-group">
                         <input type="text" id="login-username" placeholder="اسم المستخدم" maxlength="20" class="modern-input">
-                        <input type="text" id="login-code" placeholder="كود الدخول" maxlength="20" class="modern-input">
+                        <input type="password" id="login-password" placeholder="كلمة المرور" maxlength="50" class="modern-input">
                     </div>
                     <button class="modern-btn" onclick="loginWithCredentials()">
                         <span class="btn-text">دخول إلى الدردشة</span>
@@ -62,22 +62,14 @@
                         <span class="btn-glow"></span>
                     </button>
                 </div>
-
-                <!-- بحث عن المستخدمين -->
-                <div class="glass-card">
-                    <h3>🔍 البحث عن المستخدمين</h3>
-                    <input type="text" id="search-users-input" placeholder="ابحث عن مستخدم..." class="modern-input">
-                    <div id="search-results" class="search-results"></div>
-                </div>
             </div>
 
             <!-- 🛡️ معلومات الحماية -->
             <div class="security-notice glass-card">
                 <h4>🛡️ نظام الحماية MOBO:</h4>
                 <ul>
-                    <li>🔥 حماية كاملة من النسخ والتعديل</li>
+                    <li>🔥 تسجيل الدخول باسم المستخدم وكلمة المرور</li>
                     <li>👑 نظام إدارة متطور للمشرفين</li>
-                    <li>💌 رسائل خاصة آمنة</li>
                     <li>🚫 كتم وحظر المستخدمين المخالفين</li>
                     <li>© 2025 MOBO - جميع الحقوق محفوظة</li>
                 </ul>
@@ -94,7 +86,7 @@
     <!-- 💬 شاشة الدردشة الرئيسية -->
     <div id="chat-screen" class="screen">
         <div class="chat-container">
-            <!-- الهيدر المحسن -->
+            <!-- الهيدر -->
             <header class="chat-header">
                 <div class="header-left">
                     <div class="header-logo">
@@ -110,9 +102,8 @@
                     </div>
                 </div>
                 <div class="header-right">
-                    <button class="modern-btn" onclick="showProfile()">👤 الملف</button>
                     <button class="modern-btn" id="admin-panel-btn" style="display: none;" onclick="showAdminPanel()">👑 الإدارة</button>
-                    <button class="modern-btn premium" onclick="toggleUsersList()">👥 المستخدمين</button>
+                    <button class="modern-btn" onclick="toggleUsersList()">👥 المستخدمين</button>
                     <button class="modern-btn" onclick="logout()">🚪 خروج</button>
                 </div>
             </header>
@@ -133,7 +124,7 @@
                     <div class="chat-messages custom-scrollbar" id="messages">
                         <div class="welcome-message glass-card">
                             <img src="https://i.top4top.io/p_3583q2vy21.jpg" alt="مرحباً" class="welcome-logo">
-                            <h3>مرحباً بك في موقع MOBO العالمي! 👋</h3>
+                            <h3>مرحباً بك في موقع MOBO العالمي! 😈</h3>
                             <p>© 2025 MOBO - منصة الدردشة العالمية الآمنة</p>
                         </div>
                     </div>
@@ -141,8 +132,8 @@
                     <!-- أدوات الإرسال -->
                     <div class="chat-tools">
                         <form id="message-form" class="message-form">
-                            <input type="text" id="message-input" class="message-input" placeholder="اكتب رسالتك هنا..." maxlength="500">
-                            <button type="submit" class="modern-btn">إرسال 🚀</button>
+                            <input type="text" id="message-input" class="message-input" placeholder="اكتب رسالتك هنا..." maxlength="500" disabled>
+                            <button type="submit" class="modern-btn" disabled>إرسال 🚀</button>
                         </form>
                     </div>
                 </div>
@@ -150,112 +141,7 @@
         </div>
     </div>
 
-    <!-- 👤 شاشة الملف الشخصي -->
-    <div id="profile-screen" class="screen">
-        <div class="profile-container">
-            <div class="profile-header">
-                <h2>👤 الملف الشخصي</h2>
-                <button class="modern-btn" onclick="showChatScreen()">← رجوع</button>
-            </div>
-            
-            <div class="profile-content glass-card">
-                <div class="avatar-section">
-                    <div class="profile-avatar-large" id="profile-avatar">👤</div>
-                </div>
-                
-                <div class="profile-form">
-                    <div class="form-group">
-                        <label>اسم المستخدم:</label>
-                        <input type="text" id="profile-username" class="modern-input" readonly>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>الجنس:</label>
-                        <select id="profile-gender" class="modern-input">
-                            <option value="male">👨 ذكر</option>
-                            <option value="female">👩 أنثى</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>الحالة:</label>
-                        <input type="text" id="profile-status" class="modern-input" placeholder="الحالة الشخصية...">
-                    </div>
-                    
-                    <button class="modern-btn" onclick="updateProfile()">💾 حفظ التغييرات</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 👑 شاشة الإدارة -->
-    <div id="admin-screen" class="screen">
-        <div class="admin-container">
-            <div class="admin-header">
-                <h2>👑 لوحة إدارة MOBO</h2>
-                <button class="modern-btn" onclick="showChatScreen()">← رجوع</button>
-            </div>
-            
-            <div class="admin-content">
-                <div class="admin-stats glass-card">
-                    <h3>📊 إحصائيات النظام</h3>
-                    <div id="admin-stats"></div>
-                </div>
-                
-                <div class="admin-controls glass-card">
-                    <h3>🛠️ أدوات التحكم</h3>
-                    <div class="control-grid">
-                        <button class="admin-action-btn" onclick="showUsersManagement()">👥 إدارة المستخدمين</button>
-                        <button class="admin-action-btn" onclick="showMessagesManagement()">💬 إدارة الرسائل</button>
-                        <button class="admin-action-btn" onclick="showSystemSettings()">⚙️ إعدادات النظام</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 💌 شاشة الرسائل الخاصة -->
-    <div id="private-chat-screen" class="screen">
-        <div class="private-chat-container">
-            <div class="private-chat-header">
-                <h3>💌 محادثة خاصة مع <span id="private-chat-with"></span></h3>
-                <button class="modern-btn" onclick="closePrivateChat()">← رجوع</button>
-            </div>
-            
-            <div class="private-messages custom-scrollbar" id="private-messages"></div>
-            
-            <div class="private-chat-tools">
-                <form id="private-message-form" class="message-form">
-                    <input type="text" id="private-message-input" class="message-input" placeholder="اكتب رسالتك الخاصة...">
-                    <button type="submit" class="modern-btn">إرسال 💌</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
-
-    <!-- 🛡️ حماية إضافية -->
-    <script>
-        // منع التعديل على الكود
-        Object.freeze(window);
-        Object.freeze(document);
-        
-        // حماية إضافية ضد النسخ
-        document.addEventListener('copy', (e) => {
-            if (!e.target.classList.contains('allow-copy')) {
-                e.preventDefault();
-                showAlert('🚫 يمنع نسخ المحتوى - © 2025 MOBO', 'error');
-            }
-        });
-        
-        // تحديث الواجهة تلقائياً
-        setInterval(() => {
-            if (currentUser) {
-                socket.emit('get-users', { roomId: currentRoom });
-            }
-        }, 10000);
-    </script>
 </body>
 </html>
