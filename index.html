@@ -3,10 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- SEO Meta Tags -->
     <title>موقع MOBO العالمي للدردشة - © 2025</title>
-    <meta name="description" content="منصة الدردشة العالمية الآمنة - MOBO © 2025">
+    <meta name="description" content="منصة الدردشة العربية الآمنة - MOBO © 2025. دردشة فورية مع مستخدمين من جميع أنحاء العالم العربي">
+    <meta name="keywords" content="دردشة, شات, عربي, MOBO, موبو, دردشة عربية, شات عربي">
     <meta name="author" content="MOBO - المطور والمالك الرسمي">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="موقع MOBO العالمي للدردشة">
+    <meta property="og:description" content="منصة الدردشة العربية الآمنة">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://i.top4top.io/p_3583q2vy21.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="https://i.top4top.io/p_3583q2vy21.jpg">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Preconnect for better performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body class="protected-text">
     <!-- 🌟 الخلفيات المتحركة -->
@@ -27,7 +47,8 @@
                 <div class="logo-glow"></div>
                 <img src="https://i.top4top.io/p_3583q2vy21.jpg" 
                      alt="شعار MOBO العالمي" 
-                     class="logo-image">
+                     class="logo-image"
+                     loading="lazy">
                 <div class="logo-text">موقع MOBO العالمي</div>
                 <p class="logo-subtitle">منصة الدردشة العالمية الآمنة © 2025</p>
             </div>
@@ -37,12 +58,25 @@
                 <div class="glass-card">
                     <h3>🔐 تسجيل الدخول</h3>
                     <div class="input-group">
-                        <input type="text" id="login-username" placeholder="اسم المستخدم" maxlength="20" class="modern-input">
-                        <input type="password" id="login-password" placeholder="كلمة المرور" maxlength="50" class="modern-input">
+                        <input 
+                            type="text" 
+                            id="login-username" 
+                            placeholder="اسم المستخدم" 
+                            maxlength="20" 
+                            class="modern-input"
+                            autocomplete="username"
+                            required>
+                        <input 
+                            type="password" 
+                            id="login-password" 
+                            placeholder="كلمة المرور" 
+                            maxlength="50" 
+                            class="modern-input"
+                            autocomplete="current-password"
+                            required>
                     </div>
                     <button class="modern-btn" onclick="loginWithCredentials()">
-                        <span class="btn-text">دخول إلى الدردشة</span>
-                        <span class="btn-glow"></span>
+                        <span class="btn-text">دخول إلى الدردشة 🚀</span>
                     </button>
                 </div>
                 
@@ -50,16 +84,29 @@
                 <div class="glass-card">
                     <h3>🎯 إنشاء حساب جديد</h3>
                     <div class="input-group">
-                        <input type="text" id="new-username" placeholder="اسم المستخدم (3-20 حرف)" maxlength="20" class="modern-input">
-                        <input type="password" id="new-password" placeholder="كلمة المرور (4 أحرف على الأقل)" maxlength="50" class="modern-input">
-                        <select id="user-gender" class="modern-input">
+                        <input 
+                            type="text" 
+                            id="new-username" 
+                            placeholder="اسم المستخدم (3-20 حرف)" 
+                            maxlength="20" 
+                            class="modern-input"
+                            autocomplete="username"
+                            required>
+                        <input 
+                            type="password" 
+                            id="new-password" 
+                            placeholder="كلمة المرور (4 أحرف على الأقل)" 
+                            maxlength="50" 
+                            class="modern-input"
+                            autocomplete="new-password"
+                            required>
+                        <select id="user-gender" class="modern-input" required>
                             <option value="male">👨 ذكر</option>
                             <option value="female">👩 أنثى</option>
                         </select>
                     </div>
                     <button class="modern-btn" onclick="createAccount()">
-                        <span class="btn-text">إنشاء حساب جديد</span>
-                        <span class="btn-glow"></span>
+                        <span class="btn-text">إنشاء حساب جديد ✨</span>
                     </button>
                 </div>
             </div>
@@ -68,9 +115,11 @@
             <div class="security-notice glass-card">
                 <h4>🛡️ نظام الحماية MOBO:</h4>
                 <ul>
-                    <li>🔥 تسجيل الدخول باسم المستخدم وكلمة المرور</li>
+                    <li>🔥 تسجيل دخول آمن ومشفر</li>
                     <li>👑 نظام إدارة متطور للمشرفين</li>
                     <li>🚫 كتم وحظر المستخدمين المخالفين</li>
+                    <li>💬 دردشة فورية وسريعة</li>
+                    <li>🌍 غرف دردشة متعددة</li>
                     <li>© 2025 MOBO - جميع الحقوق محفوظة</li>
                 </ul>
             </div>
@@ -78,7 +127,8 @@
             <!-- حقوق الطبع -->
             <div class="copyright-notice">
                 <strong>© 2025 موقع MOBO العالمي للدردشة</strong><br>
-                المطور والمالك الرسمي: MOBO - يمنع النسخ أو التوزيع
+                المطور والمالك الرسمي: MOBO<br>
+                يمنع النسخ أو التوزيع بدون إذن كتابي
             </div>
         </div>
     </div>
@@ -90,7 +140,10 @@
             <header class="chat-header">
                 <div class="header-left">
                     <div class="header-logo">
-                        <img src="https://i.top4top.io/p_3583q2vy21.jpg" alt="شعار MOBO" class="header-logo-image">
+                        <img src="https://i.top4top.io/p_3583q2vy21.jpg" 
+                             alt="شعار MOBO" 
+                             class="header-logo-image"
+                             loading="lazy">
                         <div>
                             <h1>موقع MOBO العالمي</h1>
                             <div class="room-info" id="room-info">🌍 الغرفة العالمية الرئيسية</div>
@@ -102,9 +155,15 @@
                     </div>
                 </div>
                 <div class="header-right">
-                    <button class="modern-btn" id="admin-panel-btn" style="display: none;" onclick="showAdminPanel()">👑 الإدارة</button>
-                    <button class="modern-btn" onclick="toggleUsersList()">👥 المستخدمين</button>
-                    <button class="modern-btn" onclick="logout()">🚪 خروج</button>
+                    <button class="modern-btn small" id="admin-panel-btn" style="display: none;" onclick="showAdminPanel()">
+                        👑 الإدارة
+                    </button>
+                    <button class="modern-btn small" onclick="toggleUsersList()">
+                        👥 المستخدمين
+                    </button>
+                    <button class="modern-btn small" onclick="logout()">
+                        🚪 خروج
+                    </button>
                 </div>
             </header>
             
@@ -123,17 +182,32 @@
                 <div class="chat-content">
                     <div class="chat-messages custom-scrollbar" id="messages">
                         <div class="welcome-message glass-card">
-                            <img src="https://i.top4top.io/p_3583q2vy21.jpg" alt="مرحباً" class="welcome-logo">
+                            <img src="https://i.top4top.io/p_3583q2vy21.jpg" 
+                                 alt="مرحباً" 
+                                 class="welcome-logo"
+                                 loading="lazy">
                             <h3>مرحباً بك في موقع MOBO العالمي! 👋</h3>
                             <p>© 2025 MOBO - منصة الدردشة العالمية الآمنة</p>
+                            <p style="margin-top: 1rem; font-size: 0.95rem; opacity: 0.8;">
+                                ابدأ بالدردشة مع مستخدمين من جميع أنحاء العالم العربي
+                            </p>
                         </div>
                     </div>
                     
                     <!-- أدوات الإرسال -->
                     <div class="chat-tools">
                         <form id="message-form" class="message-form">
-                            <input type="text" id="message-input" class="message-input" placeholder="اكتب رسالتك هنا..." maxlength="500" disabled>
-                            <button type="submit" class="modern-btn" disabled>إرسال 🚀</button>
+                            <input 
+                                type="text" 
+                                id="message-input" 
+                                class="message-input" 
+                                placeholder="اكتب رسالتك هنا... (الحد الأقصى 500 حرف)" 
+                                maxlength="500" 
+                                disabled
+                                autocomplete="off">
+                            <button type="submit" class="modern-btn" disabled>
+                                إرسال 🚀
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -141,7 +215,13 @@
         </div>
     </div>
 
+    <!-- 📜 Scripts -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
+    
+    <!-- Analytics placeholder (أضف كود التحليلات هنا إذا أردت) -->
+    <script>
+        // Google Analytics أو أي كود تحليلات آخر
+    </script>
 </body>
 </html>
