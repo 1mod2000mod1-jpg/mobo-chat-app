@@ -1,11 +1,15 @@
 {
   "name": "mobo-global-chat",
   "version": "5.0.0",
-  "description": "موقع MOBO العالمي للدردشة - منصة الدردشة العالمية الآمنة © 2025 MOBO",
+  "description": "موقع MOBO العالمي للدردشة - منصة الدردشة العالمية الآمنة © 2025",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -20,8 +24,14 @@
     "mobo",
     "دردشة",
     "عربية",
-    "آمنة"
+    "آمنة",
+    "realtime",
+    "websocket"
   ],
   "author": "MOBO - المطور والمالك الرسمي",
-  "license": "COPYRIGHT © 2025 MOBO - جميع الحقوق محفوظة"
+  "license": "COPYRIGHT © 2025 MOBO - جميع الحقوق محفوظة",
+  "repository": {
+    "type": "git",
+    "url": "private"
+  }
 }
