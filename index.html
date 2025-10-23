@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موقع موب العالمي للدردشة - © 2025</title>
-    <meta name="description" content="منصة دردشة عالمية آمنة ومتطورة">
-    <meta name="author" content="المطور والمالك الرسمي: [MOBO]">
+    <title>موقع MOBO العالمي للدردشة - © 2025</title>
+    <meta name="description" content="منصة الدردشة العالمية الآمنة - MOBO © 2025">
+    <meta name="author" content="MOBO - المطور والمالك الرسمي">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="protected-text">
     <!-- 🌟 الخلفيات المتحركة -->
     <div class="stars-bg" id="stars-bg"></div>
     <div class="moving-lights">
@@ -19,153 +19,88 @@
         <div class="light"></div>
     </div>
 
-    <!-- شاشة تسجيل الدخول -->
+    <!-- 🏠 شاشة تسجيل الدخول -->
     <div id="login-screen" class="screen active">
-        <div class="login-container fade-in">
-            <!-- الشعار مع تأثيرات متطورة -->
+        <div class="login-container fade-in-up">
+            <!-- الشعار المحسن -->
             <div class="site-logo">
                 <div class="logo-glow"></div>
                 <img src="https://i.top4top.io/p_3583q2vy21.jpg" 
-                     alt="شعار الدردشة الحمراء" 
+                     alt="شعار MOBO العالمي" 
                      class="logo-image">
-                <div class="logo-text">موقع موب العالمي</div>
-                <p>منصة دردشة عالمية آمنة ومتطورة</p>
+                <div class="logo-text">موقع MOBO العالمي</div>
+                <p class="logo-subtitle">منصة الدردشة العالمية الآمنة © 2025</p>
             </div>
             
             <div class="login-options">
-                <!-- الدخول بالاسم والكود -->
-                <div class="login-option">
+                <!-- تسجيل الدخول -->
+                <div class="glass-card">
                     <h3>🔐 تسجيل الدخول</h3>
                     <div class="input-group">
-                        <input type="text" id="login-username" placeholder="اسم المستخدم" maxlength="20">
-                        <input type="text" id="login-code" placeholder="كود الدخول" maxlength="20">
+                        <input type="text" id="login-username" placeholder="اسم المستخدم" maxlength="20" class="modern-input">
+                        <input type="text" id="login-code" placeholder="كود الدخول" maxlength="20" class="modern-input">
                     </div>
                     <button class="modern-btn" onclick="loginWithCredentials()">
                         <span class="btn-text">دخول إلى الدردشة</span>
                         <span class="btn-glow"></span>
                     </button>
-                    <div class="login-info">
-                        <small>أدخل اسم المستخدم وكود الدخول</small>
-                        <small>أو <a href="#" onclick="showRecoveryOption()">استعادة الحساب</a></small>
-                    </div>
                 </div>
                 
-                <div class="or-divider">
-                    <span>أو</span>
-                </div>
-                
-                <!-- إنشاء حساب جديد -->
-                <div class="login-option">
+                <!-- إنشاء حساب -->
+                <div class="glass-card">
                     <h3>🎯 إنشاء حساب جديد</h3>
                     <div class="input-group">
-                        <input type="text" id="new-username" placeholder="اختر اسم مستخدم" maxlength="20">
-                        <input type="password" id="new-password" placeholder="اختر كلمة مرور قوية">
+                        <input type="text" id="new-username" placeholder="اسم المستخدم (3-20 حرف)" maxlength="20" class="modern-input">
+                        <input type="password" id="new-password" placeholder="كلمة المرور (4 أحرف على الأقل)" maxlength="50" class="modern-input">
+                        <select id="user-gender" class="modern-input">
+                            <option value="male">👨 ذكر</option>
+                            <option value="female">👩 أنثى</option>
+                        </select>
                     </div>
                     <button class="modern-btn" onclick="createAccount()">
                         <span class="btn-text">إنشاء حساب جديد</span>
                         <span class="btn-glow"></span>
                     </button>
-                    <div class="login-info">
-                        <small>سيتم إنشاء كود دخول فريد لك</small>
-                        <small>يمكنك إنشاء حساب واحد فقط </small>
-                    </div>
-                    <div id="username-feedback" class="feedback"></div>
-                    <div id="password-feedback" class="feedback"></div>
                 </div>
 
-                <!-- رسالة للمدير -->
-                <div class="contact-admin">
-                    <h3>📩 رسالة للمدير</h3>
-                    <textarea id="admin-message" placeholder="اكتب رسالتك للمدير هنا..." maxlength="500" rows="3"></textarea>
-                    <button class="modern-btn" onclick="sendMessageToAdmin()">
-                        <span class="btn-text">إرسال للمدير</span>
-                        <span class="btn-glow"></span>
-                    </button>
-                    <div class="login-info">
-                        <small>للاستفسارات أو المشاكل التقنية</small>
-                    </div>
+                <!-- بحث عن المستخدمين -->
+                <div class="glass-card">
+                    <h3>🔍 البحث عن المستخدمين</h3>
+                    <input type="text" id="search-users-input" placeholder="ابحث عن مستخدم..." class="modern-input">
+                    <div id="search-results" class="search-results"></div>
                 </div>
             </div>
-            
-            <!-- معلومات الحماية -->
-            <div class="security-notice">
-                <h4>🛡️ نصائح أمان:</h4>
+
+            <!-- 🛡️ معلومات الحماية -->
+            <div class="security-notice glass-card">
+                <h4>🛡️ نظام الحماية MOBO:</h4>
                 <ul>
-                    <li>لا تشارك كود الدخول مع أي شخص</li>
-                    <li>اختر كلمة مرور قوية واحتفظ بها</li>
-                    <li>يمكنك استعادة الحساب باسم المستخدم وكلمة المرور</li>
-                    <li>الحسابات غير النشطة تحذف بعد 10 أيام</li>
-                    <li>الرسائل خاصة وآمنة</li>
+                    <li>🔥 حماية كاملة من النسخ والتعديل</li>
+                    <li>👑 نظام إدارة متطور للمشرفين</li>
+                    <li>💌 رسائل خاصة آمنة</li>
+                    <li>🚫 كتم وحظر المستخدمين المخالفين</li>
+                    <li>© 2025 MOBO - جميع الحقوق محفوظة</li>
                 </ul>
             </div>
 
             <!-- حقوق الطبع -->
             <div class="copyright-notice">
-                © 2025 موقع موب العالمي للدردشة - جميع الحقوق محفوظة
+                <strong>© 2025 موقع MOBO العالمي للدردشة</strong><br>
+                المطور والمالك الرسمي: MOBO - يمنع النسخ أو التوزيع
             </div>
         </div>
     </div>
 
-    <!-- نافذة استعادة الحساب -->
-    <div id="recovery-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeRecoveryModal()">&times;</span>
-            <h2>🔑 استعادة كود الدخول</h2>
-            <div class="modal-text">
-                <div class="input-group">
-                    <input type="text" id="recovery-username" placeholder="اسم المستخدم" maxlength="20">
-                    <input type="password" id="recovery-password" placeholder="كلمة المرور">
-                </div>
-                <button class="modern-btn" onclick="recoverAccount()">
-                    <span class="btn-text">استعادة الكود</span>
-                    <span class="btn-glow"></span>
-                </button>
-                <div id="recovery-result" class="recovery-result"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة بيانات الحساب -->
-    <div id="account-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeAccountModal()">&times;</span>
-            <h2>🎉 تم إنشاء حسابك بنجاح!</h2>
-            <div class="modal-text">
-                <div class="account-data">
-                    <div class="data-row">
-                        <span class="data-label">اسم المستخدم:</span>
-                        <span id="account-username" class="data-value"></span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">كود الدخول:</span>
-                        <div class="code-container">
-                            <span id="account-code" class="code-value"></span>
-                            <button class="copy-btn" onclick="copyAccountCode()">📋 نسخ</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="important-notice">
-                    <h4>💡 ملاحظة مهمة:</h4>
-                    <p>احتفظ بكود الدخول في مكان آمن لأنه لا يمكن استعادته إلا باسم المستخدم وكلمة المرور</p>
-                </div>
-                <button class="modern-btn" onclick="closeAccountModalAndLogin()">
-                    <span class="btn-text">متابعة إلى الدردشة</span>
-                    <span class="btn-glow"></span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- شاشة الدردشة الرئيسية -->
+    <!-- 💬 شاشة الدردشة الرئيسية -->
     <div id="chat-screen" class="screen">
         <div class="chat-container">
-            <!-- الهيدر -->
+            <!-- الهيدر المحسن -->
             <header class="chat-header">
                 <div class="header-left">
                     <div class="header-logo">
-                        <img src="https://i.top4top.io/p_3583q2vy21.jpg" alt="الشعار" class="header-logo-image">
+                        <img src="https://i.top4top.io/p_3583q2vy21.jpg" alt="شعار MOBO" class="header-logo-image">
                         <div>
-                            <h1>موقع موب العالمي</h1>
+                            <h1>موقع MOBO العالمي</h1>
                             <div class="room-info" id="room-info">🌍 الغرفة العالمية الرئيسية</div>
                         </div>
                     </div>
@@ -175,209 +110,152 @@
                     </div>
                 </div>
                 <div class="header-right">
-                    <button class="modern-btn" id="rooms-btn" onclick="toggleRoomsList()">🌍 الغرف</button>
-                    <button class="modern-btn" id="users-list-btn" onclick="toggleUsersList()">👥 المستخدمين</button>
-                    <button class="modern-btn premium-badge" id="admin-panel-btn" style="display: none;" onclick="showAdminPanel()">👑 الأدمن</button>
-                    <button class="modern-btn" id="admin-messages-btn" style="display: none;" onclick="showAdminMessages()">📩 الرسائل</button>
-                    <button class="modern-btn" id="logout-btn" onclick="logout()">خروج</button>
+                    <button class="modern-btn" onclick="showProfile()">👤 الملف</button>
+                    <button class="modern-btn" id="admin-panel-btn" style="display: none;" onclick="showAdminPanel()">👑 الإدارة</button>
+                    <button class="modern-btn premium" onclick="toggleUsersList()">👥 المستخدمين</button>
+                    <button class="modern-btn" onclick="logout()">🚪 خروج</button>
                 </div>
             </header>
             
             <!-- المنطقة الرئيسية -->
             <div class="chat-main">
-                <!-- قائمة الغرف -->
-                <div id="rooms-sidebar" class="rooms-sidebar custom-scrollbar">
-                    <div class="sidebar-header">
-                        <h3>🌍 غرف الدردشة</h3>
-                        <button class="modern-btn" id="create-room-btn" style="display: none;" onclick="showCreateRoomForm()">+ غرفة جديدة</button>
-                    </div>
-                    <div id="rooms-list"></div>
-                </div>
-
                 <!-- قائمة المستخدمين -->
                 <div id="users-sidebar" class="users-sidebar custom-scrollbar">
-                    <h3>👥 المستخدمين المتصلين</h3>
-                    <div id="users-list"></div>
+                    <div class="sidebar-header">
+                        <h3>👥 المستخدمين المتصلين</h3>
+                        <button class="modern-btn small" onclick="toggleUsersList()">✕</button>
+                    </div>
+                    <div id="users-list" class="users-list"></div>
                 </div>
                 
                 <!-- منطقة الرسائل -->
                 <div class="chat-content">
                     <div class="chat-messages custom-scrollbar" id="messages">
-                        <div class="welcome-message">
+                        <div class="welcome-message glass-card">
                             <img src="https://i.top4top.io/p_3583q2vy21.jpg" alt="مرحباً" class="welcome-logo">
-                            <h3>مرحباً بك في موقع موب العالمي! 👋</h3>
-                            <p>اختر غرفة دردشة من القائمة لبدء المحادثة</p>
-                            <p class="copyright-small">© 2025 موقع موب العالمي للدردشة - جميع الحقوق محفوظة</p>
+                            <h3>مرحباً بك في موقع MOBO العالمي! 👋</h3>
+                            <p>© 2025 MOBO - منصة الدردشة العالمية الآمنة</p>
                         </div>
                     </div>
                     
                     <!-- أدوات الإرسال -->
                     <div class="chat-tools">
-                        <div class="message-options">
-                            <button class="modern-btn" id="private-btn" onclick="togglePrivateMode()">🔒 خاص</button>
-                            <select id="user-select" style="display: none;">
-                                <option value="">اختر مستخدم</option>
-                            </select>
-                        </div>
-                        
                         <form id="message-form" class="message-form">
-                            <input type="text" id="message-input" placeholder="اكتب رسالتك هنا..." maxlength="500" disabled>
-                            <button type="submit" disabled>إرسال 🚀</button>
+                            <input type="text" id="message-input" class="message-input" placeholder="اكتب رسالتك هنا..." maxlength="500">
+                            <button type="submit" class="modern-btn">إرسال 🚀</button>
                         </form>
                     </div>
                 </div>
             </div>
-
-            <!-- حقوق الطبع والنشر -->
-            <footer class="copyright-footer">
-                <div class="copyright-container">
-                    <p>© 2025 <strong>موقع موب العالمي للدردشة</strong>. جميع الحقوق محفوظة.</p>
-                    <p>تم الانشاء و التطوير بواسطة الشرير: [MOBO] - يمنع النسخ أو التوزيع</p>
-                    <div class="copyright-links">
-                        <a href="#" onclick="showCopyrightInfo()">📜 شروط الاستخدام</a>
-                        <span>|</span>
-                        <a href="#" onclick="showPrivacyPolicy()">🔒 سياسة الخصوصية</a>
-                        <span>|</span>
-                        <a href="#" onclick="showContactInfo()">📞 اتصل بنا</a>
-                    </div>
-                </div>
-            </footer>
         </div>
     </div>
 
-    <!-- نافذة حقوق الطبع -->
-    <div id="copyright-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2 id="modal-title">📜 حقوق الطبع والنشر</h2>
-            <div class="modal-text" id="modal-text">
-                <!-- سيتم تعبئته بالجافاسكريبت -->
+    <!-- 👤 شاشة الملف الشخصي -->
+    <div id="profile-screen" class="screen">
+        <div class="profile-container">
+            <div class="profile-header">
+                <h2>👤 الملف الشخصي</h2>
+                <button class="modern-btn" onclick="showChatScreen()">← رجوع</button>
+            </div>
+            
+            <div class="profile-content glass-card">
+                <div class="avatar-section">
+                    <div class="profile-avatar-large" id="profile-avatar">👤</div>
+                </div>
+                
+                <div class="profile-form">
+                    <div class="form-group">
+                        <label>اسم المستخدم:</label>
+                        <input type="text" id="profile-username" class="modern-input" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>الجنس:</label>
+                        <select id="profile-gender" class="modern-input">
+                            <option value="male">👨 ذكر</option>
+                            <option value="female">👩 أنثى</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>الحالة:</label>
+                        <input type="text" id="profile-status" class="modern-input" placeholder="الحالة الشخصية...">
+                    </div>
+                    
+                    <button class="modern-btn" onclick="updateProfile()">💾 حفظ التغييرات</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- نافذة إنشاء غرفة -->
-    <div id="create-room-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeCreateRoomModal()">&times;</span>
-            <h2>🌍 إنشاء غرفة جديدة</h2>
-            <div class="modal-text">
-                <form id="create-room-form">
-                    <input type="text" id="room-name" placeholder="اسم الغرفة" maxlength="30" required>
-                    <select id="room-country" required>
-                        <option value="">اختر الدولة</option>
-                        <option value="palestine">🇵🇸 فلسطين</option>
-                        <option value="saudi">🇸🇦 السعودية</option>
-                        <option value="uae">🇦🇪 الإمارات</option>
-                        <option value="egypt">🇪🇬 مصر</option>
-                        <option value="qatar">🇶🇦 قطر</option>
-                        <option value="kuwait">🇰🇼 الكويت</option>
-                        <option value="bahrain">🇧🇭 البحرين</option>
-                        <option value="oman">🇴🇲 عمان</option>
-                        <option value="yemen">🇾🇪 اليمن</option>
-                        <option value="syria">🇸🇾 سوريا</option>
-                        <option value="iraq">🇮🇶 العراق</option>
-                        <option value="jordan">🇯🇴 الأردن</option>
-                        <option value="lebanon">🇱🇧 لبنان</option>
-                        <option value="libya">🇱🇾 ليبيا</option>
-                        <option value="tunisia">🇹🇳 تونس</option>
-                        <option value="algeria">🇩🇿 الجزائر</option>
-                        <option value="morocco">🇲🇦 المغرب</option>
-                        <option value="sudan">🇸🇩 السودان</option>
-                        <option value="somalia">🇸🇴 الصومال</option>
-                        <option value="mauritania">🇲🇷 موريتانيا</option>
-                        <option value="comoros">🇰🇲 جزر القمر</option>
-                        <option value="djibouti">🇩🇯 جيبوتي</option>
-                        <option value="global">🌍 العالمية</option>
-                    </select>
-                    <textarea id="room-description" placeholder="وصف الغرفة (اختياري)" maxlength="200" rows="3"></textarea>
-                    <button type="submit" class="modern-btn">إنشاء الغرفة</button>
+    <!-- 👑 شاشة الإدارة -->
+    <div id="admin-screen" class="screen">
+        <div class="admin-container">
+            <div class="admin-header">
+                <h2>👑 لوحة إدارة MOBO</h2>
+                <button class="modern-btn" onclick="showChatScreen()">← رجوع</button>
+            </div>
+            
+            <div class="admin-content">
+                <div class="admin-stats glass-card">
+                    <h3>📊 إحصائيات النظام</h3>
+                    <div id="admin-stats"></div>
+                </div>
+                
+                <div class="admin-controls glass-card">
+                    <h3>🛠️ أدوات التحكم</h3>
+                    <div class="control-grid">
+                        <button class="admin-action-btn" onclick="showUsersManagement()">👥 إدارة المستخدمين</button>
+                        <button class="admin-action-btn" onclick="showMessagesManagement()">💬 إدارة الرسائل</button>
+                        <button class="admin-action-btn" onclick="showSystemSettings()">⚙️ إعدادات النظام</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 💌 شاشة الرسائل الخاصة -->
+    <div id="private-chat-screen" class="screen">
+        <div class="private-chat-container">
+            <div class="private-chat-header">
+                <h3>💌 محادثة خاصة مع <span id="private-chat-with"></span></h3>
+                <button class="modern-btn" onclick="closePrivateChat()">← رجوع</button>
+            </div>
+            
+            <div class="private-messages custom-scrollbar" id="private-messages"></div>
+            
+            <div class="private-chat-tools">
+                <form id="private-message-form" class="message-form">
+                    <input type="text" id="private-message-input" class="message-input" placeholder="اكتب رسالتك الخاصة...">
+                    <button type="submit" class="modern-btn">إرسال 💌</button>
                 </form>
             </div>
         </div>
     </div>
-    
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
 
-    <!-- حماية حقوق الطبع -->
+    <!-- 🛡️ حماية إضافية -->
     <script>
-        // منع النسخ العام لكن السماح بنسخ الأكواد فقط
-        document.addEventListener('contextmenu', function(e) {
-            if (!e.target.classList.contains('code-value') && !e.target.classList.contains('copy-btn')) {
+        // منع التعديل على الكود
+        Object.freeze(window);
+        Object.freeze(document);
+        
+        // حماية إضافية ضد النسخ
+        document.addEventListener('copy', (e) => {
+            if (!e.target.classList.contains('allow-copy')) {
                 e.preventDefault();
-                showProtectionAlert('🚫 يمنع النسخ');
+                showAlert('🚫 يمنع نسخ المحتوى - © 2025 MOBO', 'error');
             }
         });
-
-        document.addEventListener('keydown', function(e) {
-            const allowedElements = ['login-code', 'new-username', 'new-password', 'admin-message', 'message-input'];
-            const isAllowed = allowedElements.includes(e.target.id) || 
-                            e.target.classList.contains('code-value') ||
-                            e.target.isContentEditable;
-            
-            if (!isAllowed && (
-                (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's')) || 
-                e.key === 'F12' ||
-                (e.ctrlKey && e.shiftKey && e.key === 'I')
-            )) {
-                e.preventDefault();
-                showProtectionAlert('🚫 هذا الإجراء غير مسموح ');
+        
+        // تحديث الواجهة تلقائياً
+        setInterval(() => {
+            if (currentUser) {
+                socket.emit('get-users', { roomId: currentRoom });
             }
-        });
-
-        function showProtectionAlert(message) {
-            const alertDiv = document.createElement('div');
-            alertDiv.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #dc2626, #ef4444);
-                color: white;
-                padding: 1rem 2rem;
-                border-radius: 10px;
-                z-index: 10000;
-                font-weight: bold;
-                box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
-                animation: fadeIn 0.5s ease-out;
-            `;
-            alertDiv.textContent = message;
-            document.body.appendChild(alertDiv);
-            
-            setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    document.body.removeChild(alertDiv);
-                }
-            }, 3000);
-        }
-
-        // إنشاء النجوم المتحركة
-        function createStars() {
-            const starsBg = document.getElementById('stars-bg');
-            const starCount = 150;
-            
-            for (let i = 0; i < starCount; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                
-                const size = Math.random() * 3 + 1;
-                const left = Math.random() * 100;
-                const top = Math.random() * 100;
-                const delay = Math.random() * 5;
-                const duration = Math.random() * 3 + 2;
-                
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                star.style.left = `${left}%`;
-                star.style.top = `${top}%`;
-                star.style.animationDelay = `${delay}s`;
-                star.style.animationDuration = `${duration}s`;
-                
-                starsBg.appendChild(star);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', createStars);
+        }, 10000);
     </script>
 </body>
 </html>
