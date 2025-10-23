@@ -1,12 +1,13 @@
 {
   "name": "mob-global-chat-pro",
   "version": "5.0.0",
-  "description": "موقع موب العالمي المتطور - منصة الدردشة العالمية الآمنة © 2025 MOBO",
+  "description": "موقع MOBO العالمي المتطور - منصة الدردشة العالمية الآمنة © 2025 MOBO",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "npm install"
+    "build": "npm install",
+    "production": "NODE_ENV=production node server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -15,6 +16,9 @@
     "uuid": "^9.0.1",
     "compression": "^1.7.4",
     "helmet": "^7.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -27,8 +31,9 @@
     "mobo",
     "دردشة",
     "عربية",
-    "آمنة"
+    "آمنة",
+    "MOBO"
   ],
   "author": "MOBO - المطور والمالك الرسمي",
-  "license": "COPYRIGHT © 2025 MOBO - جميع الحقوق محفوظة - يمنع النسخ أو التوزيع"
+  "license": "COPYRIGHT © 2025 MOBO - جميع الحقوق محفوظة - يمنع النسخ أو التوزيع أو التعديل"
 }
