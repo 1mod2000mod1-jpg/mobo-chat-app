@@ -2,10 +2,8 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
-const multer = require('multer');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
-const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
@@ -23,38 +21,7 @@ console.log(`
 ╚══════════════════════════════════════════════════╝
 `);
 
-// إنشاء مجلد التحميلات إذا لم يكن موجوداً
-if (!fs.existsSync('uploads')) {
-    fs.mkdirSync('uploads');
-}
-
-// إعداد رفع الملفات
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
-    cb(null, uniqueName);
-  }
-});
-
-const upload = multer({ 
-  storage: storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB
-  },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('يسمح برفع الصور فقط!'));
-    }
-  }
-});
-
 app.use(express.static(path.join(__dirname)));
-app.use('/uploads', express.static('uploads'));
 
 // تخزين البيانات
 const users = new Map();
@@ -66,7 +33,7 @@ const verifiedUsers = new Set();
 const adminUser = {
   id: 'admin',
   username: 'المدير',
-  password: bcrypt.hashSync('admin123', 10),
+  password: bcrypt.hashSync('admin123', 12),
   isAdmin: true,
   isVerified: true,
   joinDate: new Date(),
@@ -74,6 +41,11 @@ const adminUser = {
 };
 users.set('admin', adminUser);
 userCodes.set('admin', 'ADMIN2024');
+
+// نظام الحماية المتطور
+const loginAttempts = new Map();
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOGIN_TIMEOUT = 15 * 60 * 1000; // 15 دقيقة
 
 // 🧹 تنظيف الحسابات غير النشطة
 setInterval(() => {
@@ -107,59 +79,100 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// رفع الصور
-app.post('/upload', upload.single('image'), (req, res) => {
-  try {
-    if (req.file) {
-      res.json({ 
-        success: true, 
-        imageUrl: '/uploads/' + req.file.filename 
-      });
-    } else {
-      res.json({ success: false, error: 'لم يتم رفع أي ملف' });
-    }
-  } catch (error) {
-    res.json({ success: false, error: error.message });
-  }
-});
-
-// نظام تسجيل الدخول
+// نظام تسجيل الدخول المطور
 io.on('connection', (socket) => {
   console.log('مستخدم متصل:', socket.id);
 
-  socket.on('login-with-code', (data) => {
-    for (const [userId, code] of userCodes.entries()) {
-      if (code === data.code) {
-        const user = users.get(userId);
+  socket.on('login-with-credentials', (data) => {
+    const clientIP = socket.handshake.address;
+    const now = Date.now();
+    
+    // التحقق من عدد المحاولات
+    if (loginAttempts.has(clientIP)) {
+      const attempts = loginAttempts.get(clientIP);
+      if (attempts.count >= MAX_LOGIN_ATTEMPTS) {
+        const timeLeft = LOGIN_TIMEOUT - (now - attempts.lastAttempt);
+        if (timeLeft > 0) {
+          socket.emit('login-failed', `تم تجاوز عدد المحاولات. انتظر ${Math.ceil(timeLeft/60000)} دقيقة`);
+          return;
+        } else {
+          loginAttempts.delete(clientIP);
+        }
+      }
+    }
+    
+    // البحث عن المستخدم بالاسم والكود
+    let userFound = false;
+    for (const [userId, user] of users.entries()) {
+      const userCode = userCodes.get(userId);
+      if (user.username === data.username && userCode === data.code) {
+        userFound = true;
+        // نجح التسجيل
+        loginAttempts.delete(clientIP);
+        
         user.lastActive = new Date();
         socket.userId = userId;
+        
         socket.emit('login-success', {
           username: user.username,
           isAdmin: user.isAdmin,
-          isVerified: user.isVerified
+          isVerified: verifiedUsers.has(userId)
         });
-        socket.broadcast.emit('user-joined', user.username);
         
-        // إرسال الرسائل السابقة
+        socket.broadcast.emit('user-joined', user.username);
         socket.emit('previous-messages', messages.slice(-50));
-        return;
+        break;
       }
     }
-    socket.emit('login-failed', 'كود الدخول غير صحيح');
+    
+    if (!userFound) {
+      // فشل التسجيل
+      if (!loginAttempts.has(clientIP)) {
+        loginAttempts.set(clientIP, { count: 1, lastAttempt: now });
+      } else {
+        loginAttempts.get(clientIP).count++;
+        loginAttempts.get(clientIP).lastAttempt = now;
+      }
+      
+      const attemptsLeft = MAX_LOGIN_ATTEMPTS - loginAttempts.get(clientIP).count;
+      socket.emit('login-failed', `بيانات الدخول غير صحيحة. لديك ${attemptsLeft} محاولات متبقية`);
+    }
   });
 
   socket.on('create-account', (data) => {
+    const username = data.username.trim();
+    const password = data.password;
+    
+    // تحقق من الاسم المستخدم مسبقاً
+    for (const user of users.values()) {
+      if (user.username === username) {
+        socket.emit('account-error', 'اسم المستخدم موجود مسبقاً');
+        return;
+      }
+    }
+    
+    if (username.length < 3) {
+      socket.emit('account-error', 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل');
+      return;
+    }
+    
+    if (password.length < 4) {
+      socket.emit('account-error', 'كلمة المرور يجب أن تكون 4 أحرف على الأقل');
+      return;
+    }
+    
     const userId = uuidv4();
-    const userCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const userCode = Math.random().toString(36).substring(2, 10).toUpperCase();
     
     const newUser = {
       id: userId,
-      username: data.username,
-      password: bcrypt.hashSync(data.password, 10),
+      username: username,
+      password: bcrypt.hashSync(password, 12),
       isAdmin: false,
       isVerified: false,
       joinDate: new Date(),
-      lastActive: new Date()
+      lastActive: new Date(),
+      ip: socket.handshake.address
     };
     
     users.set(userId, newUser);
@@ -167,7 +180,7 @@ io.on('connection', (socket) => {
     
     socket.userId = userId;
     socket.emit('account-created', {
-      username: data.username,
+      username: username,
       loginCode: userCode,
       message: 'احتفظ بهذا الكود للدخول مستقبلاً'
     });
@@ -190,9 +203,11 @@ io.on('connection', (socket) => {
       };
       
       if (data.isPrivate && data.toUserId) {
+        // رسالة خاصة
         socket.to(data.toUserId).emit('private-message', message);
         socket.emit('private-message', message);
       } else {
+        // رسالة عامة
         messages.push(message);
         io.emit('new-message', message);
       }
