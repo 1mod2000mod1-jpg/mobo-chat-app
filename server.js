@@ -5,6 +5,7 @@ const path = require('path');
 const multer = require('multer');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
@@ -12,16 +13,45 @@ const io = socketIo(server);
 
 const PORT = process.env.PORT || 3000;
 
+// 🔒 حماية حقوق الطبع والنشر
+console.log(`
+╔══════════════════════════════════════════════════╗
+║               🚀 منصة الدردشة الحمراء            ║
+║           © 2024 جميع الحقوق محفوظة             ║
+║        تم التطوير بواسطة: [أدخل اسمك هنا]       ║
+║     يمنع النسخ أو التوزيع غير المصرح به         ║
+╚══════════════════════════════════════════════════╝
+`);
+
+// إنشاء مجلد التحميلات إذا لم يكن موجوداً
+if (!fs.existsSync('uploads')) {
+    fs.mkdirSync('uploads');
+}
+
 // إعداد رفع الملفات
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
+    const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
+    cb(null, uniqueName);
   }
 });
-const upload = multer({ storage: storage });
+
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('يسمح برفع الصور فقط!'));
+    }
+  }
+});
 
 app.use(express.static(path.join(__dirname)));
 app.use('/uploads', express.static('uploads'));
@@ -29,10 +59,10 @@ app.use('/uploads', express.static('uploads'));
 // تخزين البيانات
 const users = new Map();
 const messages = [];
-const userCodes = new Map(); // كود تسجيل الدخول
-const verifiedUsers = new Set(); // المستخدمين الموثقين
+const userCodes = new Map();
+const verifiedUsers = new Set();
 
-// 🔴 إنشاء حساب الأدمن (أنت) - غير البيانات كما تريد
+// 🔴 إنشاء حساب الأدمن (غير هذه البيانات بمعلوماتك)
 const adminUser = {
   id: 'admin',
   username: 'المدير',
@@ -62,12 +92,13 @@ setInterval(() => {
   if (deletedCount > 0) {
     console.log(`🧹 تم حذف ${deletedCount} حساب غير نشط`);
   }
-}, 24 * 60 * 60 * 1000); // كل 24 ساعة
+}, 24 * 60 * 60 * 1000);
 
 // 🧹 تنظيف الذاكرة
 setInterval(() => {
   if (messages.length > 1000) {
-    messages = messages.slice(-500);
+    messages.length = 500;
+    console.log('🧹 تم تنظيف ذاكرة الرسائل');
   }
 }, 60000);
 
@@ -78,13 +109,17 @@ app.get('/', (req, res) => {
 
 // رفع الصور
 app.post('/upload', upload.single('image'), (req, res) => {
-  if (req.file) {
-    res.json({ 
-      success: true, 
-      imageUrl: '/uploads/' + req.file.filename 
-    });
-  } else {
-    res.json({ success: false });
+  try {
+    if (req.file) {
+      res.json({ 
+        success: true, 
+        imageUrl: '/uploads/' + req.file.filename 
+      });
+    } else {
+      res.json({ success: false, error: 'لم يتم رفع أي ملف' });
+    }
+  } catch (error) {
+    res.json({ success: false, error: error.message });
   }
 });
 
@@ -92,7 +127,6 @@ app.post('/upload', upload.single('image'), (req, res) => {
 io.on('connection', (socket) => {
   console.log('مستخدم متصل:', socket.id);
 
-  // تسجيل الدخول بكود
   socket.on('login-with-code', (data) => {
     for (const [userId, code] of userCodes.entries()) {
       if (code === data.code) {
@@ -105,13 +139,15 @@ io.on('connection', (socket) => {
           isVerified: user.isVerified
         });
         socket.broadcast.emit('user-joined', user.username);
+        
+        // إرسال الرسائل السابقة
+        socket.emit('previous-messages', messages.slice(-50));
         return;
       }
     }
     socket.emit('login-failed', 'كود الدخول غير صحيح');
   });
 
-  // إنشاء حساب جديد
   socket.on('create-account', (data) => {
     const userId = uuidv4();
     const userCode = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -137,7 +173,6 @@ io.on('connection', (socket) => {
     });
   });
 
-  // إرسال رسالة
   socket.on('send-message', (data) => {
     const user = users.get(socket.userId);
     if (user && data.text.trim()) {
@@ -149,50 +184,51 @@ io.on('connection', (socket) => {
         image: data.image,
         timestamp: new Date().toLocaleTimeString('ar-EG'),
         isAdmin: user.isAdmin,
-        isVerified: user.isVerified,
+        isVerified: verifiedUsers.has(socket.userId),
         isPrivate: data.isPrivate || false,
         toUserId: data.toUserId
       };
       
-      // إرسال الرسالة
       if (data.isPrivate && data.toUserId) {
-        // رسالة خاصة
         socket.to(data.toUserId).emit('private-message', message);
         socket.emit('private-message', message);
       } else {
-        // رسالة عامة
         messages.push(message);
         io.emit('new-message', message);
       }
     }
   });
 
-  // ✅ إدارة من قبل الأدمن
   socket.on('admin-action', (data) => {
     const user = users.get(socket.userId);
     if (user && user.isAdmin) {
       switch (data.action) {
         case 'verify-user':
           verifiedUsers.add(data.targetUserId);
-          io.emit('user-verified', data.targetUserId);
+          const targetUser = users.get(data.targetUserId);
+          io.emit('user-verified', { 
+            userId: data.targetUserId, 
+            username: targetUser.username 
+          });
           break;
         case 'delete-user':
           users.delete(data.targetUserId);
           userCodes.delete(data.targetUserId);
+          verifiedUsers.delete(data.targetUserId);
           io.emit('user-deleted', data.targetUserId);
           break;
       }
     }
   });
 
-  // الحصول على قائمة المستخدمين
   socket.on('get-users', () => {
     const userList = Array.from(users.values()).map(user => ({
       id: user.id,
       username: user.username,
       isOnline: true,
       isVerified: verifiedUsers.has(user.id),
-      isAdmin: user.isAdmin
+      isAdmin: user.isAdmin,
+      joinDate: user.joinDate
     }));
     socket.emit('users-list', userList);
   });
@@ -209,10 +245,6 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`🚀 الخادم يعمل على البورت: ${PORT}`);
-  // إنشاء مجلد التحميلات
-  const fs = require('fs');
-  if (!fs.existsSync('uploads')) {
-    fs.mkdirSync('uploads');
-  }
+  console.log(`✅ الخادم يعمل على البورت: ${PORT}`);
+  console.log(`🔗 الرابط: http://localhost:${PORT}`);
 });
